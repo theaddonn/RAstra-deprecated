@@ -399,10 +399,8 @@ impl PacketWriter {
         let mut data = Cursor::new(vec![]);
         match data.write_unsigned_varint_32(val) {
             Ok(_) => {
-                match self.buf.write(&*data.get_mut()) {
-                    Ok(_) => Ok(()),
-                    Err(_) => Err(Error::PACKET_WRITER_InavlidVarint)
-                }
+                self.buf.put_slice(&*data.get_mut());
+                Ok(())
             }
             Err(_) => Err(Error::PACKET_WRITER_InavlidVarint)
         }
@@ -412,10 +410,8 @@ impl PacketWriter {
         let mut data = Cursor::new(vec![]);
         match data.write_signed_varint_32(val) {
             Ok(_) => {
-                match self.buf.write(&*data.get_mut()) {
-                    Ok(_) => Ok(()),
-                    Err(_) => Err(Error::PACKET_WRITER_InavlidVarint)
-                }
+                self.buf.put_slice(&*data.get_mut());
+                Ok(())
             }
             Err(_) => Err(Error::PACKET_WRITER_InavlidVarint)
         }

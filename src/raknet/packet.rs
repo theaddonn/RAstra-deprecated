@@ -3,7 +3,7 @@ use std::net::SocketAddr;
 use crate::error::Error;
 use crate::error::*;
 use crate::network::packet_io::PacketReader;
-use crate::network::writer::PacketWriter;
+use crate::network::packet_io::PacketWriter;
 use crate::utils::endian::Endian;
 
 #[warn(non_camel_case_types)]

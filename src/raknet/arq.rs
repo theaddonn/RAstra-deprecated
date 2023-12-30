@@ -2,7 +2,7 @@ use std::{collections::HashMap, net::SocketAddr};
 
 use crate::error::*;
 use crate::network::packet_io::PacketReader;
-use crate::network::writer::PacketWriter;
+use crate::network::packet_io::PacketWriter;
 use crate::raknet::{fragment::FragmentQ};
 use crate::utils::endian::Endian;
 use crate::raknet_log_debug;

@@ -4,7 +4,6 @@ use crate::utils::endian::Endian;
 
 pub mod packet;
 pub mod packet_io;
-pub mod packet_io_game;
 
 #[tokio::test]
 async fn test_u24_encode_decode() {

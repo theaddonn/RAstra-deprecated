@@ -7,7 +7,7 @@ use std::str::FromStr;
 use std::sync::Arc;
 use tokio::sync::mpsc::Sender;
 use tokio::sync::Mutex;
-use crate::network::writer::PacketWriter;
+use crate::network::packet_io::PacketWriter;
 use crate::utils::endian::Endian;
 
 pub struct Server {
