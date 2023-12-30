@@ -45,3 +45,43 @@ jobs:
       with:
         name: x86_64-unknown-linux-gnu-artifact
         path: target/x86_64-unknown-linux-gnu/release/RAstra
+
+  build_aarch64-pc-windows-msvc:
+
+    runs-on: windows-latest
+
+    steps:
+    - uses: actions/checkout@v3
+    - uses: ilammy/msvc-dev-cmd@v1
+
+    - name: Setup Rust aarch64-pc-windows-msvc
+      run: rustup target add aarch64-pc-windows-msvc
+      
+    - name: Build aarch64-pc-windows-msvc
+      run: cargo build --release --target=aarch64-pc-windows-msvc
+      
+    - name: Archive Build Artifacts for aarch64-pc-windows-msvc
+      uses: actions/upload-artifact@v2
+      with:
+        name: aarch64-pc-windows-msvc-artifact
+        path: target/aarch64-pc-windows-msvc/release/RAstra.exe
+
+  build_aarch64-unknown-linux-gnu:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Setup Rust aarch64-unknown-linux-gnu
+      run: rustup target add aarch64-unknown-linux-gnu
+      
+    - name: Build aarch64-unknown-linux-gnu
+      run: cargo build --release --target=aarch64-unknown-linux-gnu
+      
+    - name: Archive Build Artifacts for aarch64-unknown-linux-gnu
+      uses: actions/upload-artifact@v2
+      with:
+        name: aarch64-unknown-linux-gnu-artifact
+        path: target/aarch64-unknown-linux-gnu/release/RAstra
+
