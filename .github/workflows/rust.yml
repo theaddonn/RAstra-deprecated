@@ -13,6 +13,7 @@ jobs:
 
     steps:
     - uses: actions/checkout@v3
+    - uses: ilammy/msvc-dev-cmd@v1
 
     - name: Setup Rust x86_64-pc-windows-msvc
       run: rustup target add x86_64-pc-windows-msvc
