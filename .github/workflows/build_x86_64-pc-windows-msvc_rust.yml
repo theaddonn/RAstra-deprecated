@@ -15,7 +15,7 @@ jobs:
     - uses: actions/checkout@v3
       
     - name: Build x86_64-pc-windows-msvc
-      run: cargo build --bin=Rastra --release --target=x86_64-pc-windows-msvc
+      run: cargo build --bin=RAstra --release --target=x86_64-pc-windows-msvc
       
     - name: Archive Build Artifacts
       uses: actions/upload-artifact@v2
