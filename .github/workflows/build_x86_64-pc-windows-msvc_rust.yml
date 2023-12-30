@@ -1,0 +1,18 @@
+name: Rust
+
+on:
+  push:
+    branches: [ "master" ]
+  pull_request:
+    branches: [ "master" ]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+      
+    - name: Build x86_64-pc-windows-msvc
+      run: cargo build --bin=Rastra --release --target=x86_64-pc-windows-msvc
