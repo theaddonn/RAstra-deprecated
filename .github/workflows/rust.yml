@@ -7,15 +7,13 @@ on:
     branches: [ "master" ]
 
 jobs:
-  build:
+  build_x86_64-pc-windows-msvc:
 
     runs-on: windows-latest
 
     steps:
     - uses: actions/checkout@v3
     - uses: ilammy/msvc-dev-cmd@v1
-
-    # x86_64-pc-windows-msvc
 
     - name: Setup Rust x86_64-pc-windows-msvc
       run: rustup target add x86_64-pc-windows-msvc
@@ -28,9 +26,13 @@ jobs:
       with:
         name: x86_64-pc-windows-msvc-artifact
         path: target/x86_64-pc-windows-msvc/release/*.exe
+        
+  build_x86_64-unknown-linux-gnu:
 
-      
-    # x86_64-pc-windows-msvc
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
 
     - name: Setup Rust x86_64-unknown-linux-gnu
       run: rustup target add x86_64-unknown-linux-gnu
@@ -42,4 +44,4 @@ jobs:
       uses: actions/upload-artifact@v2
       with:
         name: x86_64-unknown-linux-gnu-artifact
-        path: target/x86_64-pc-windows-msvc/release/*.elf
+        path: target/x86_64-unknown-linux-gnu/release/*.elf
