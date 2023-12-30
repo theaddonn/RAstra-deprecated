@@ -1,6 +1,6 @@
 # RAstra
 <picture>
-  <img src="https://github.com/Adrian8115/RAstra/blob/1d35cc8c7f3210497d9b747c0b5fe272d71ca4d6/assets/RAstra_banner.png">
+  <img alt="The RAstra banner" src="https://github.com/Adrian8115/RAstra/blob/9b26b2e77fed8c48e4124cfdf50a0e3e5c678588/assets/RAstra_banner.png">
 </picture>
 
 ###### A fast, asynchronous, multi-protocol and easy Minecraft Bedrock Server Software written in Rust
