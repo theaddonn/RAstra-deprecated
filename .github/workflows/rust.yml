@@ -157,6 +157,14 @@ jobs:
             VERSION: ${{ github.run_number }}
           draft: false
           prerelease: false
+
+      - name: download Release Asset for x86_64-pc-windows-msvc
+        uses: actions/download-artifact@v2
+        with:
+          name: x86_64-pc-windows-msvc-artifact
+          path: target/x86_64-pc-windows-msvc-artifact/RAstra.exe
+      
+          
       - name: Upload Release Asset for x86_64-pc-windows-msvc
         id: upload-release-asset 
         uses: actions/upload-release-asset@v1
