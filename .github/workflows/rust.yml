@@ -167,7 +167,7 @@ jobs:
 
       - name: CHECK
         run: |
-          cd .\target
+          cd target
           ls
           
       - name: Upload Release Asset for x86_64-pc-windows-msvc
