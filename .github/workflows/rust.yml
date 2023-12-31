@@ -129,3 +129,40 @@ jobs:
       with:
         name: aarch64-apple-darwin-artifact
         path: target/aarch64-apple-darwin/release/RAstra
+  release:
+    needs:
+      - build_x86_64-pc-windows-msvc
+      - build_x86_64-unknown-linux-gnu
+      - build_x86_64-apple-darwin
+      - build_aarch64-pc-windows-msvc
+      - build_aarch64-unknown-linux-gnu
+      - build_aarch64-apple-darwin
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Create Release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # This token is provided by Actions, you do not need to create your own token
+        with:
+          tag_name: autoatic_release_${{ github.run_number }}
+          release_name: Automatic Release (V ${{ github.run_number }})
+          body: |
+            This is an automatic Release for the RAstra MCBE Server Software created by the rust build (rust.yml) workflow.
+            VERSION: ${{ github.run_number }}
+          draft: false
+          prerelease: false
+      - name: Upload Release Asset for x86_64-pc-windows-msvc
+        id: upload-release-asset 
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps 
+          asset_path: target/x86_64-pc-windows-msvc/release/RAstra.exe
+          asset_name: RAstra_v${{ github.run_number }}.jar
+          asset_content_type: application/zip
+
