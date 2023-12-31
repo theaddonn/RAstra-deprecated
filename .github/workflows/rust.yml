@@ -150,11 +150,11 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # This token is provided by Actions, you do not need to create your own token
         with:
-          tag_name: autoatic_release_${{ github.run_number }}
-          release_name: Release (v0.1.${{ github.run_number }})
+          tag_name: automatic_release_${{ github.run_number }}
+          release_name: Release (v${{ github.run_number }})
           body: |
             ###### This is an automatic Release for the RAstra MCBE Server Software created by the rust build (rust.yml) workflow.
-            VERSION: 0.1.${{ github.run_number }}
+            ###### VERSION: ${{ github.run_number }}
           draft: false
           prerelease: false
 
