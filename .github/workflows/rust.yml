@@ -164,7 +164,11 @@ jobs:
           name: x86_64-pc-windows-msvc-artifact
           path: target/x86_64-pc-windows-msvc-artifact/RAstra.exe
 
-      - name: CHECK
+
+      - name: CHECK1
+        run: cd target
+
+      - name: CHECK2
         run: ls
           
       - name: Upload Release Asset for x86_64-pc-windows-msvc
