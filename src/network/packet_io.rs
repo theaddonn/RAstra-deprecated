@@ -7,7 +7,7 @@ use std::{
     str,
 };
 use tokio::io::AsyncWriteExt;
-use varint::{VarintRead, VarintWrite};
+use varint_rs::{VarintReader, VarintWriter};
 
 pub struct PacketReader {
     buf: Cursor<Vec<u8>>,
@@ -194,7 +194,7 @@ impl PacketReader {
             return Err(Error::RAKNET_ReadPacketBufferError);
         }
 
-        match self.buf.read_unsigned_varint_32() {
+        match self.buf.read_u32_varint() {
             Ok(v) => Ok(v),
             Err(_) => Err(Error::RAKNET_ReadPacketBufferError)
         }
@@ -205,7 +205,7 @@ impl PacketReader {
             return Err(Error::RAKNET_ReadPacketBufferError);
         }
 
-        match self.buf.read_signed_varint_32() {
+        match self.buf.read_i32_varint() {
             Ok(v) => Ok(v),
             Err(_) => Err(Error::RAKNET_ReadPacketBufferError)
         }
@@ -397,7 +397,7 @@ impl PacketWriter {
 
     pub fn write_u32_varint(&mut self, val: u32) -> ServerResult<()> {
         let mut data = Cursor::new(vec![]);
-        match data.write_unsigned_varint_32(val) {
+        match data.write_u32_varint(val) {
             Ok(_) => {
                 self.buf.put_slice(&*data.get_mut());
                 Ok(())
@@ -408,7 +408,7 @@ impl PacketWriter {
 
     pub fn write_i32_varint(&mut self, val: i32) -> ServerResult<()> {
         let mut data = Cursor::new(vec![]);
-        match data.write_signed_varint_32(val) {
+        match data.write_i32_varint(val) {
             Ok(_) => {
                 self.buf.put_slice(&*data.get_mut());
                 Ok(())

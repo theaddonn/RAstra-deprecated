@@ -99,7 +99,7 @@ impl Server {
                     packet.write_u8(254).unwrap();
                     packet.write_u32_varint(12).unwrap();
                     packet.write_u8(143).unwrap();
-                    packet.write_u16(0, Endian::Big).unwrap();
+                    packet.write_u16(257, Endian::Big).unwrap();
                     packet.write_u16(0, Endian::Big).unwrap();
                     packet.write_u8(0).unwrap();
                     packet.write_u8(0).unwrap();

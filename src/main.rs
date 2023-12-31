@@ -3,8 +3,8 @@ use std::env;
 use std::io::Read;
 use std::process::exit;
 use std::str::FromStr;
-use varint::VarintRead;
-use varint::VarintWrite;
+use varint_rs::VarintReader;
+use varint_rs::VarintWriter;
 
 mod error;
 mod logger;
