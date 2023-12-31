@@ -129,7 +129,9 @@ jobs:
       with:
         name: aarch64-apple-darwin-artifact
         path: target/aarch64-apple-darwin/release/RAstra
+        
   release:
+    permissions: write-all
     needs:
       - build_x86_64-pc-windows-msvc
       - build_x86_64-unknown-linux-gnu
