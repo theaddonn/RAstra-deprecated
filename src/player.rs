@@ -16,5 +16,3 @@ struct Player {
     language: Lang,
     connection: Option<Conn>,
 }
-
-impl
