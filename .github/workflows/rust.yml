@@ -82,6 +82,8 @@ jobs:
       
     - name: Build aarch64-unknown-linux-gnu
       run: cargo build --release --target=aarch64-unknown-linux-gnu
+      env:
+        CARGO_TARGET_AARCH64_UNKNOWN_LINUX_GNU_LINKER: aarch64-linux-gnu-gcc
       
     - name: Archive Build Artifacts for aarch64-unknown-linux-gnu
       uses: actions/upload-artifact@v2
