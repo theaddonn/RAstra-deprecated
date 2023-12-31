@@ -151,7 +151,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # This token is provided by Actions, you do not need to create your own token
         with:
           tag_name: autoatic_release_${{ github.run_number }}
-          release_name: Release (V 0.1.${{ github.run_number }})
+          release_name: Release (v0.1.${{ github.run_number }})
           body: |
             ###### This is an automatic Release for the RAstra MCBE Server Software created by the rust build (rust.yml) workflow.
             VERSION: 0.1.${{ github.run_number }}
@@ -194,15 +194,7 @@ jobs:
           name: aarch64-apple-darwin-artifact
           path: target/aarch64-apple-darwin-artifact
 
-      #- name: CHECK
-      #  run: |
-      #    cd target
-      #    ls
-      #    cd x86_64-pc-windows-msvc-artifact
-      #    ls
-      #    cd RAstra.exe
-      #    ls
-          
+
       - name: Upload Release Asset for x86_64-pc-windows-msvc
         id: upload-release-asset 
         uses: actions/upload-release-asset@v1
@@ -211,7 +203,7 @@ jobs:
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps 
           asset_path: target/x86_64-pc-windows-msvc-artifact/RAstra.exe
-          asset_name: RAstra_AMD_Windows_(x86_64-pc-windows-msvc).exe
+          asset_name: RAstra_AMD_Windows_x86_64-pc-windows-msvc.exe
           asset_content_type: application/zip
 
       - name: Upload Release Asset for x86_64-unknown-linux-gnu
@@ -221,7 +213,7 @@ jobs:
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps
           asset_path: target/x86_64-unknown-linux-gnu-artifact/RAstra
-          asset_name: RAstra_AMD_Linux_(x86_64-unknown-linux-gnu)
+          asset_name: RAstra_AMD_Linux_x86_64-unknown-linux-gnu
           asset_content_type: application/zip
 
       - name: Upload Release Asset for x86_64-apple-darwin
@@ -231,7 +223,7 @@ jobs:
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps
           asset_path: target/x86_64-apple-darwin-artifact/RAstra
-          asset_name: RAstra_AMD_MAC_(x86_64-apple-darwin)
+          asset_name: RAstra_AMD_MAC_x86_64-apple-darwin
           asset_content_type: application/zip
 
       - name: Upload Release Asset for aarch64-pc-windows-msvc
@@ -241,7 +233,7 @@ jobs:
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps
           asset_path: target/aarch64-pc-windows-msvc-artifact/RAstra.exe
-          asset_name: RAstra_ARM_WINDOWS_(aarch64-pc-windows-msvc).exe
+          asset_name: RAstra_ARM_WINDOWS_aarch64-pc-windows-msvc.exe
           asset_content_type: application/zip
 
       - name: Upload Release Asset for aarch64-unknown-linux-gnu
@@ -251,7 +243,7 @@ jobs:
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps
           asset_path: target/aarch64-unknown-linux-gnu-artifact/RAstra
-          asset_name: RAstra_ARM_LINUX_(aarch64-unknown-linux-gnu)
+          asset_name: RAstra_ARM_LINUX_aarch64-unknown-linux-gnu
           asset_content_type: application/zip
 
       - name: Upload Release Asset for aarch64-apple-darwin
@@ -261,6 +253,6 @@ jobs:
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps
           asset_path: target/aarch64-apple-darwin-artifact/RAstra
-          asset_name: RAstra_ARM_MAC_(aarch64-apple-darwin)
+          asset_name: RAstra_ARM_MAC_aarch64-apple-darwin
           asset_content_type: application/zip
 
