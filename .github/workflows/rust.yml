@@ -169,6 +169,8 @@ jobs:
         run: |
           cd target
           ls
+          cd x86_64-pc-windows-msvc-artifact
+          ls
           
       - name: Upload Release Asset for x86_64-pc-windows-msvc
         id: upload-release-asset 
