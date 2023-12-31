@@ -132,8 +132,8 @@ jobs:
         
   release:
     permissions: | 
-      - read-all
-      - write-all
+      read-all
+      write-all
     needs:
       - build_x86_64-pc-windows-msvc
       - build_x86_64-unknown-linux-gnu
