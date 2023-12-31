@@ -90,4 +90,22 @@ jobs:
       with:
         name: aarch64-unknown-linux-gnu-artifact
         path: target/aarch64-unknown-linux-gnu/release/RAstra
+        
+  build_aarch64_apple_darwin:
+  
+    runs-on: macos-latest
 
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Setup Rust aarch64_apple_darwin
+      run: rustup target add aarch64_apple_darwin
+
+    - name: Build aarch64_apple_darwin
+      run: cargo build --release --target=aarch64_apple_darwin
+
+    - name: Archive Build Artifacts for aarch64_apple_darwin
+      uses: actions/upload-artifact@v2
+      with:
+        name: aarch64_apple_darwin-artifact
+        path: target/aarch64_apple_darwin/release/*
