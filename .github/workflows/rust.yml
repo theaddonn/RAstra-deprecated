@@ -220,7 +220,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps
-          asset_path: target/x86_64-unknown-linux-gnu/RAstra
+          asset_path: target/x86_64-unknown-linux-gnu-artifact/RAstra
           asset_name: RAstra_AMD_Linux_(x86_64-unknown-linux-gnu)
           asset_content_type: application/zip
 
@@ -230,7 +230,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps
-          asset_path: target/x86_64-apple-darwin/RAstra
+          asset_path: target/x86_64-apple-darwin-artifact/RAstra
           asset_name: RAstra_AMD_MAC_(x86_64-apple-darwin)
           asset_content_type: application/zip
 
@@ -240,7 +240,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps
-          asset_path: target/aarch64-pc-windows-msvc/RAstra.exe
+          asset_path: target/aarch64-pc-windows-msvc-artifact/RAstra.exe
           asset_name: RAstra_ARM_WINDOWS_(aarch64-pc-windows-msvc).exe
           asset_content_type: application/zip
 
@@ -250,7 +250,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps
-          asset_path: target/aarch64-unknown-linux-gnu/RAstra
+          asset_path: target/aarch64-unknown-linux-gnu-artifact/RAstra
           asset_name: RAstra_ARM_LINUX_(aarch64-unknown-linux-gnu)
           asset_content_type: application/zip
 
@@ -260,7 +260,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps
-          asset_path: target/aarch64-apple-darwin/RAstra
+          asset_path: target/aarch64-apple-darwin-artifact/RAstra
           asset_name: RAstra_ARM_MAC_(aarch64-apple-darwin)
           asset_content_type: application/zip
 
