@@ -9,8 +9,11 @@ edition = "2021"
 tokio = { version = "1.35.1", features = ["full"] }
 bytes = "1.5.0"
 rand = "0.8.5"
-uuid = { version = "1.6.1", features = ["v4"]}
+uuid = "1.6.1"
 compress = { version = "0.2.1", features = ["flate"] }
 base64 = "0.21.5"
 varint-rs = { version = "2.2.0", features = ["signed", "default"]}
+toml = "0.8.8"
+serde = { version = "1.0.193", features = ["derive"] }
+lazy_static = "1.4"
 
