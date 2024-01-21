@@ -12,6 +12,7 @@ theme:
     - navigation.footer
     - navigation.indexes
     - navigation.sections
+    - navigation.expand
     - navigation.tabs
     - navigation.top
     - navigation.tracking
@@ -103,3 +104,7 @@ nav:
   - Plugins:
       - Overview: plugins/overview.md
       - Functions: plugins/functions.md
+
+
+repo_url: https://github.com/Adrian8115/RAstra
+repo_name: Adrian8115/RAstra
