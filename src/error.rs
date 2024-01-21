@@ -1,23 +1,13 @@
-#[derive(Debug)]
-pub enum Error {
-    RAKNET_SetRaknetRawSocketError,
-    RAKNET_NotListen,
-    RAKNET_BindAdressError,
-    RAKNET_ConnectionClosed,
-    RAKNET_NotSupportVersion,
-    RAKNET_IncorrectReply,
-    RAKNET_PacketParseError,
-    RAKNET_SocketError,
-    RAKNET_IncorrectReliability,
-    RAKNET_IncorrectPacketID,
-    RAKNET_ReadPacketBufferError,
-    RAKNET_PacketSizeExceedMTU,
-    RAKNET_PacketHeaderError,
-    SERVER_GamepacketIDUnknown,
-    SERVER_DEVICEOSIDUnknown,
-    SERVER_ArmSizeUnknown,
-    SERVER_ColorHexInvalid,
-    PACKET_WRITER_InavlidVarint,
-}
+use std::fmt::Debug;
 
-pub type ServerResult<T> = Result<T, Error>;
+#[derive(Debug)]
+#[allow(non_snake_case)]
+pub enum RastraError {
+    ServerGamepacketUnknown,
+    ServerDeviceOsUnknown,
+    ServerArmSizeUnknown,
+    ServerColorHexInvalid,
+    ServerPlayerNotConnected,
+
+    PacketWriterInvalidVarint,
+}

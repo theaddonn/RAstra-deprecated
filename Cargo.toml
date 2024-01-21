@@ -1,5 +1,5 @@
 [package]
-name = "RAstra"
+name = "rastra"
 version = "0.1.0"
 edition = "2021"
 
@@ -16,4 +16,8 @@ varint-rs = { version = "2.2.0", features = ["signed", "default"]}
 toml = "0.8.8"
 serde = { version = "1.0.193", features = ["derive"] }
 lazy_static = "1.4"
+async_once = "0.2.6"
+
+[dependencies.rust-raknet]
+path = "src/raknet"
 

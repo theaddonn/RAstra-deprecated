@@ -1,11 +1,9 @@
-use crate::conn::ConnState::CONNECTION_ACCEPTED;
-use crate::error::RastraError;
-use crate::player::Player;
-use rust_raknet::error::RaknetError;
-use rust_raknet::{RaknetSocket, Reliability};
+use crate::raknet::{RaknetSocket, Reliability};
 use std::sync::Arc;
+use crate::conn::ConnState::CONNECTION_ACCEPTED;
+use crate::error::ServerResult;
+use crate::player::Player;
 
-#[allow(non_snake_case, non_camel_case_types)]
 pub enum ConnState {
     CONNECTION_ACCEPTED,
     NETWORK_SETTINGS,
@@ -20,7 +18,7 @@ pub struct Conn {
     salt: [u8; 16],
     key: String,
     state: ConnState,
-    pub player: Option<Arc<Player>>,
+    pub player: Option<Arc<Player>>
 }
 
 impl Conn {
@@ -36,26 +34,29 @@ impl Conn {
         }
     }
 
-    pub async fn manage(&mut self) {
+    pub async fn manage(&mut self){
         self.network_settings().await;
         self.login_process().await;
         self.handle_packets().await;
     }
 
-    pub async fn network_settings(&mut self) {
+    pub async fn network_settings(&mut self){
         self.state = ConnState::NETWORK_SETTINGS
+
     }
 
-    pub async fn login_process(&mut self) {
+    pub async fn login_process(&mut self){
         self.state = ConnState::LOGIN
+
     }
 
-    pub async fn handle_packets(&self) {}
+    pub async fn handle_packets(&self){
 
-    pub async fn send(&self, data: &[u8]) -> Result<(), RaknetError> {
-        return match self.socket.send(data, Reliability::Reliable).await {
-            Ok(_) => Ok(()),
-            Err(err) => Err(err),
-        };
+    }
+
+
+
+    pub async fn send(&self, data: &[u8]){
+
     }
 }

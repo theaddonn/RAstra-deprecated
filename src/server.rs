@@ -1,140 +1,223 @@
-use crate::network::packet::packet_info::GamePacket;
-use crate::raknet::{RaknetListener, RaknetSocket, Reliability};
-use crate::{log_info, log_warning};
+use crate::config::config::Config;
+use crate::player::Player;
+use crate::{log_error, log_info};
+use async_once::AsyncOnce;
+use lazy_static::lazy_static;
+use rand::random;
+use rust_raknet::{RaknetListener, RaknetSocket};
+use std::env;
+use std::fmt::Debug;
 use std::net::{IpAddr, SocketAddr};
-use std::path::Path;
-use std::str::FromStr;
+use std::process::exit;
 use std::sync::Arc;
-use tokio::sync::mpsc::Sender;
+use std::time::Duration;
+use std::time::SystemTime;
+use tokio::sync::mpsc::{Receiver, Sender};
 use tokio::sync::Mutex;
-use crate::network::packet_io::PacketWriter;
-use crate::utils::endian::Endian;
+use tokio::{select, time};
+
+// Load server instance as a sort of singleton
+// Make it a static ref to be accessible on the entire file
+// Load it just on use through lazy-static and init it asynchronous
+lazy_static! {
+    static ref SERVER_INSTANCE: AsyncOnce<Arc<Mutex<Server>>> = AsyncOnce::new( async {
+        Arc::new(Mutex::new(Server::init().await))
+    });
+
+    //static ref SERVER_UPDATE_MOTD_SIGNAL: AsyncOnce<(Sender<bool>, Receiver<bool>)> = AsyncOnce::new( async {
+    //    tokio::sync::mpsc::channel(1);
+    //});
+}
 
 pub struct Server {
-    listener: RaknetListener,
+    config: Config,
+    // The player list
+    players: Vec<Player>,
+    // The guid of the server used for the identity of the server, is rnd every time
+    guid: u64,
+    // The current tick of the server
+    tick: usize,
 }
 
 impl Server {
-    pub async fn new() -> Arc<Mutex<Server>> {
-        log_info!("START SERVER");
-        return Arc::new(Mutex::new(Server {
-            listener: RaknetListener::bind(&SocketAddr::new(
-                IpAddr::from_str("127.0.0.1").expect("Couldn't get Ip Address from String"),
-                19132,
-            ))
-            .await
-            .unwrap(),
-        }));
+    // Get the Server instance with also write access (read access included)
+    pub async fn get_instance() -> Arc<Mutex<Server>> {
+        return Arc::clone(SERVER_INSTANCE.get().await);
     }
 
-    pub async fn start(public_server: &Arc<Mutex<Self>>) {
-        let mut server = public_server.lock().await;
+    async fn init() -> Server {
+        // Load Server Config from config file loader
+        let server_config = Config::load().await;
 
-        server
-            .listener
-            .set_pong_data(Vec::from(
-                "MCPE;Dedicated Server;390;1.14.60;0;10;13253860892328930865;Bedrock level;Survival;1;19132;19133;"
-                    .as_bytes(),
-            ))
-            .unwrap();
+        // If the user activated debug messages, they should have a full backtrace
+        if server_config.debug_messages == true {
+            // This sets the env var so Rust gives a full backtrace when it crashes
+            env::set_var("RUST_BACKTRACE", "full");
+        }
 
-        server.listener.listen().await;
+        let server_instance = Server {
+            config: server_config,
+            players: vec![],
+            guid: random(),
+            tick: 0,
+        };
 
-        drop(server);
+        return server_instance;
+    }
 
-        let (mut running_sender, mut running_receiver) = tokio::sync::mpsc::channel(1);
+    pub async fn start() {
+        log_info!("START SERVER");
 
-        let task_accept_new_connections =
-            tokio::spawn(Server::accept_new_connections(Arc::clone(public_server)));
-        let task_start_ctrl_c_thread = tokio::spawn(Server::start_ctrl_c_thread(
-            Arc::clone(public_server),
-            running_sender.clone(),
-        ));
-        let task_start_cli_thread = tokio::spawn(Server::start_cli_thread(
-            Arc::clone(public_server),
-            running_sender.clone(),
-        ));
+        let (running_sender, mut running_receiver) = tokio::sync::mpsc::channel(1);
+        let (update_motd_sender, mut update_motd_receiver) = tokio::sync::mpsc::channel(1);
+
+        let _ = vec![
+            tokio::spawn(Server::handle_listener(update_motd_receiver)),
+            tokio::spawn(Server::start_ctrl_c_task(running_sender.clone())),
+            tokio::spawn(Server::start_cli_task(running_sender.clone())),
+            tokio::spawn(Server::start_tick_loop(update_motd_sender)),
+        ];
+
+        log_info!("SPAWNED EVERYTHING!");
 
         'running: loop {
             match running_receiver.recv().await.unwrap() {
                 _ => break 'running,
             }
         }
-
-        task_accept_new_connections.abort();
-        task_start_ctrl_c_thread.abort();
-        task_start_cli_thread.abort();
     }
 
-    pub async fn stop(public_server: &Arc<Mutex<Self>>) {
+    pub async fn stop() {
         log_info!("STOP SERVER");
     }
 
-    async fn accept_new_connections(public_server: Arc<Mutex<Self>>) {
-        let mut server = public_server.lock().await;
-        let listener = &mut server.listener;
+    pub async fn update_motd(listener: &mut RaknetListener, server: &Server) {
+        log_info!("CURRENT MOTD: {}", listener.get_motd().await);
+
+        listener
+            .set_full_motd(format!(
+                "{};{};{};{};{};{};{};{};Survival;1;{};{};",
+                server.config.protocol_edition,
+                server.config.name,
+                server.config.protocol_version,
+                server.config.game_version,
+                random::<u8>(),
+                server.config.max_players,
+                server.guid,
+                server.config.motd,
+                server.config.port_v4,
+                server.config.port_v6,
+            ))
+            .unwrap();
+
+        log_info!(
+            "UPDATED MOTD: {}",
+            format!(
+                "{};{};{};{};{};{};{};{};Survival;1;{};{};",
+                server.config.protocol_edition,
+                server.config.name,
+                server.config.protocol_version,
+                server.config.game_version,
+                random::<u8>(),
+                server.config.max_players,
+                server.guid,
+                server.config.motd,
+                server.config.port_v4,
+                server.config.port_v6,
+            )
+        );
+    }
+
+    pub async fn start_tick_loop(update_motd_sender: Sender<bool>) {
+        let mut interval = time::interval(Duration::from_millis(5000));
+
+        log_info!("SPAWNED TICK LOOP");
 
         loop {
-            let socket = listener.accept().await.unwrap();
-            tokio::spawn(Server::handle_connection(
-                Arc::clone(&public_server),
-                socket,
-            ));
+            interval.tick().await;
+
+            let mut server = Server::get_instance().await;
+            let mut server = server.lock().await;
+
+            server.tick += 1;
+            tokio::spawn(Server::tick(server.tick.clone()));
+            update_motd_sender.send(true).await.unwrap();
         }
     }
 
-    async fn handle_connection(server: Arc<Mutex<Self>>, raknet_socket: RaknetSocket) {
+    pub async fn tick(tick: usize) {
+        log_info!("TICK: {tick}")
+    }
+
+    pub async fn build_raknet_listener() -> RaknetListener {
+        let server = &Server::get_instance().await;
+        let server = &server.lock().await;
+
+        let server_config = &server.config;
+
+        return match RaknetListener::bind(&SocketAddr::new(
+            IpAddr::from(server_config.ip),
+            server_config.port_v4,
+        ))
+        .await
+        {
+            Ok(v) => v,
+            Err(err) => {
+                log_error!("ERROR WHILE TRYING TO START SERVER: \n{err}")
+            }
+        };
+    }
+
+    async fn handle_listener(mut update_motd_receiver: Receiver<bool>) {
+        let mut listener = Server::build_raknet_listener().await;
+
+        let server = Server::get_instance().await;
+        let server = server.lock().await;
+
+        drop(server);
+
+        listener.listen().await;
+
+        loop {
+            select! {
+                socket = RaknetListener::accept(&mut listener) => {
+                    tokio::spawn(Server::handle_connection(socket.unwrap()));
+                }
+                _ = update_motd_receiver.recv() => {
+                    let server = Server::get_instance().await;
+                    let server = server.lock().await;
+
+                    Server::update_motd(&mut listener, &server).await;
+                }
+            }
+        }
+    }
+
+    async fn handle_connection(raknet_socket: RaknetSocket) {
         loop {
             let data = raknet_socket.recv().await;
             match data {
-                Err(error) => break,
+                Err(error) => log_error!(
+                    "A Error occurred while handling new connections: {:?}",
+                    error
+                ),
                 Ok(buf) => {
                     log_info!(
                         "NEW PACKET!\nDAT: {:?}\nSTR: {:?}",
                         buf,
                         String::from_utf8_lossy(&*buf)
                     );
-
-                    let mut packet = PacketWriter::new();
-                    packet.write_u8(254).unwrap();
-                    packet.write_u32_varint(12).unwrap();
-                    packet.write_u8(143).unwrap();
-                    packet.write_u16(257, Endian::Big).unwrap();
-                    packet.write_u16(0, Endian::Big).unwrap();
-                    packet.write_u8(0).unwrap();
-                    packet.write_u8(0).unwrap();
-                    packet.write_f32(0.0).unwrap();
-                    packet.write_u8(0).unwrap();
-
-                    log_info!("OWN: {:?}", &packet.clone().get_raw_payload());
-
-                    let _ = raknet_socket
-                        .send(
-                            &packet.clone().get_raw_payload(),
-                            Reliability::Reliable,
-                        )
-                        .await;
-
-                    tokio::fs::write(
-                        &Path::new(&format!(
-                            "D:\\user\\adria\\Downloads\\buf_data{:?}.bin",
-                            buf[2]
-                        )),
-                        &buf,
-                    )
-                    .await
-                    .unwrap()
                 }
             }
         }
     }
 
-    async fn start_ctrl_c_thread(server: Arc<Mutex<Self>>, sender: Sender<bool>) {
+    async fn start_ctrl_c_task(sender: Sender<bool>) {
         tokio::signal::ctrl_c().await.unwrap();
         sender.send(false).await.unwrap();
     }
 
-    async fn start_cli_thread(server: Arc<Mutex<Self>>, sender: Sender<bool>) {
+    async fn start_cli_task(sender: Sender<bool>) {
         'input_cli: loop {
             let mut buffer = String::new();
             let data = std::io::stdin();
@@ -149,12 +232,12 @@ impl Server {
                 "EXIT" | "STOP" | "RETURN" | "END" | "KILL" => {
                     break 'input_cli;
                 }
-                _ => {
-                    // TODO: ADD CLI INPUT COMMANDS AND NOT FOUND
+                val => {
+                    log_info!("COMMAND NOT FOUND: {val}")
                 }
             }
         }
 
-        sender.send(false).await.expect("TODO: panic message");
+        sender.send(false).await.unwrap();
     }
 }

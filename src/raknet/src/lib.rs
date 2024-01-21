@@ -38,11 +38,8 @@
 //! - [x] reliable ordered
 //! - [x] reliable sequenced
 
-pub use arq::Reliability;
-pub use server::*;
-pub use socket::*;
-
 mod arq;
+mod datatype;
 pub mod error;
 mod fragment;
 mod log;
@@ -50,6 +47,11 @@ mod packet;
 mod server;
 mod socket;
 mod utils;
+
+pub use crate::arq::Reliability;
+pub use crate::log::enable_raknet_log;
+pub use crate::server::*;
+pub use crate::socket::*;
 
 // #[tokio::test]
 // async fn test_ping_pong() {

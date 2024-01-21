@@ -1,7 +1,7 @@
-use crate::error::RastraError;
-use crate::error::RastraError::ServerDeviceOsUnknown;
+use crate::error::Error::SERVER_DEVICEOSIDUnknown;
+use crate::error::ServerResult;
 
-enum DeviceOS {
+pub enum DeviceOS {
     Android,
     IOS,
     OSX, // MacOS
@@ -24,7 +24,6 @@ enum DeviceOS {
 }
 
 impl DeviceOS {
-    #[allow(deprecated)]
     fn get_id(&self) -> i32 {
         match self {
             DeviceOS::Android => 1,
@@ -44,8 +43,7 @@ impl DeviceOS {
         }
     }
 
-    #[allow(deprecated)]
-    fn from_id(id: &u8) -> Result<DeviceOS, RastraError> {
+    fn from_id(id: &u8) -> ServerResult<DeviceOS> {
         match id {
             1 => Ok(DeviceOS::Android),
             2 => Ok(DeviceOS::Android),
@@ -61,7 +59,7 @@ impl DeviceOS {
             12 => Ok(DeviceOS::Android),
             13 => Ok(DeviceOS::Android),
             14 => Ok(DeviceOS::Android),
-            _ => Err(ServerDeviceOsUnknown),
+            _ => Err(SERVER_DEVICEOSIDUnknown),
         }
     }
 }

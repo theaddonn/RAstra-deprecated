@@ -1,8 +1,13 @@
-use crate::utils::lang::Lang;
-use uuid::Uuid;
 use crate::conn::Conn;
+use crate::error::RastraError;
+use crate::utils::device::Device;
+use crate::utils::lang::Lang;
+use crate::utils::skin::skin::Skin;
+use rust_raknet::Reliability;
+use std::sync::Arc;
+use uuid::Uuid;
 
-struct Player {
+pub struct Player {
     name: String,
     xuid: String,
     uuid: Uuid,
@@ -14,5 +19,35 @@ struct Player {
     gui_scale: i32,
     is_editor_mode: bool,
     language: Lang,
-    connection: Option<Conn>,
+    skin: Skin,
+    device: Device,
+    connection: Option<Arc<Conn>>,
+}
+
+impl Player {
+    pub fn send_text() {}
+
+    pub fn is_connected(&self) -> bool {
+        return self.connection.is_some();
+    }
+
+    pub async fn kick(
+        &self,
+        message: String,
+        hide_disconnect_screen: bool,
+    ) -> Result<(), RastraError> {
+        return if self.is_connected() {
+            unimplemented!("THIS IS UNIMPLEMENTED!");
+
+            self.connection
+                .unwrap()
+                .socket
+                .send(&[], Reliability::Reliable)
+                .await
+                .unwrap();
+            Ok(())
+        } else {
+            Err(RastraError::ServerPlayerNotConnected)
+        };
+    }
 }

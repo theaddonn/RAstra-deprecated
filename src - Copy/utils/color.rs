@@ -1,4 +1,5 @@
-use crate::error::RastraError;
+use crate::error::Error::SERVER_ColorHexInvalid;
+use crate::error::ServerResult;
 
 pub struct Color {
     r: u8,
@@ -12,9 +13,9 @@ impl Color {
         return Self { r, g, b, a };
     }
 
-    pub fn from_hex(hex_color: &str) -> Result<Color, RastraError> {
+    pub fn from_hex(hex_color: &str) -> ServerResult<Color> {
         if hex_color.len() != 7 || !hex_color.starts_with("#") {
-            return Err(RastraError::ServerColorHexInvalid);
+            return Err(SERVER_ColorHexInvalid);
         }
 
         let hex_values = &hex_color[1..]; // Skip the '#' character
@@ -29,13 +30,13 @@ impl Color {
         ) {
             Ok(Color { r, g, b, a: 255 })
         } else {
-            Err(RastraError::ServerColorHexInvalid)
+            Err(SERVER_ColorHexInvalid)
         }
     }
 
-    pub fn from_hex_with_opacity(hex_color: &str) -> Result<Color, RastraError> {
+    pub fn from_hex_with_opacity(hex_color: &str) -> ServerResult<Color> {
         if hex_color.len() != 9 || !hex_color.starts_with("#") {
-            return Err(RastraError::ServerColorHexInvalid);
+            return Err(SERVER_ColorHexInvalid);
         }
 
         let hex_values = &hex_color[1..]; // Skip the '#' character
@@ -52,7 +53,7 @@ impl Color {
         ) {
             Ok(Color { r, g, b, a })
         } else {
-            Err(RastraError::ServerColorHexInvalid)
+            Err(SERVER_ColorHexInvalid)
         }
     }
 
