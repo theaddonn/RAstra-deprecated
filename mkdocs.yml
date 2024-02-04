@@ -104,6 +104,9 @@ nav:
   - Plugins:
       - Overview: plugins/overview.md
       - Functions: plugins/functions.md
+  - Bedrock Protocol:
+      - Overview: bedrock_protocol/overview.md
+      - Basics: bedrock_protocol/basics.md
 
 
 repo_url: https://github.com/Adrian8115/RAstra
