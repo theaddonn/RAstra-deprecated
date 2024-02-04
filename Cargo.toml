@@ -8,6 +8,7 @@ tokio = { version = "1.35.1", features = ["full"] }
 compress = { version = "0.2.1", features = ["flate"] }
 varint-rs = { version = "2.2.0", features = ["signed", "std"]}
 serde = { version = "1.0.193", features = ["derive"] }
+rak-rs = { version = "0.3.2", default-features = false, features = [ "async_tokio", "mcpe", "debug_all" ] }
 bytes = "1.5.0"
 rand = "0.8.5"
 uuid = "1.6.1"
@@ -15,5 +16,3 @@ base64 = "0.21.5"
 toml = "0.8.8"
 lazy_static = "1.4"
 async_once = "0.2.6"
-rak-rs = "0.3.2"
-log = "0.4.20"
