@@ -15,6 +15,3 @@
 - 📜 Multi-Protocol Management
 - 🌟 Amazing Community
 
-## *Plugins*
-- hopefully soon
-- 
