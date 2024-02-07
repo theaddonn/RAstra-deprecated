@@ -8,7 +8,7 @@ motd = "my motd"
 compression = "Flate"
 
 auto_update_current_players = true
-max_players = 1000
+max_players = 100
 
 debug_messages = true
 
@@ -16,5 +16,5 @@ protocol_version = 630
 force_protocol_version = false
 protocol_edition = "MCPE"
 
-game_version = "1.20.50"
+game_version = "1.20.51"
 force_version = false

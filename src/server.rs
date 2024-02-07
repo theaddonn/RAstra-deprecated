@@ -1,20 +1,22 @@
 use crate::config::config::Config;
 use crate::player::Player;
-use crate::{log_error, log_info};
+use crate::{error, info, warning};
 use async_once::AsyncOnce;
 use lazy_static::lazy_static;
 use rand::random;
-use rust_raknet::{RaknetListener, RaknetSocket};
 use std::env;
-use std::fmt::Debug;
 use std::net::{IpAddr, SocketAddr};
 use std::process::exit;
-use std::sync::Arc;
+use std::sync::{Arc};
 use std::time::Duration;
-use std::time::SystemTime;
+use rak_rs::Listener;
+use rak_rs::connection::Connection;
 use tokio::sync::mpsc::{Receiver, Sender};
-use tokio::sync::Mutex;
+use tokio::sync::{Mutex, MutexGuard};
 use tokio::{select, time};
+use crate::cli::cli::Cli;
+use crate::motd::update::update_motd;
+use std::clone::Clone;
 
 // Load server instance as a sort of singleton
 // Make it a static ref to be accessible on the entire file
@@ -23,20 +25,29 @@ lazy_static! {
     static ref SERVER_INSTANCE: AsyncOnce<Arc<Mutex<Server>>> = AsyncOnce::new( async {
         Arc::new(Mutex::new(Server::init().await))
     });
-
-    //static ref SERVER_UPDATE_MOTD_SIGNAL: AsyncOnce<(Sender<bool>, Receiver<bool>)> = AsyncOnce::new( async {
-    //    tokio::sync::mpsc::channel(1);
-    //});
 }
 
+/// The main Server struct of RAstra
+///
+/// ### Example:
+/// ```no_run
+/// #[tokio::main]
+/// async fn main() {
+///     Server::start().await;
+///     Server::stop().await;
+/// }
+/// ```
 pub struct Server {
-    config: Config,
+    pub config: Config,
     // The player list
-    players: Vec<Player>,
+    pub players: Vec<Player>,
     // The guid of the server used for the identity of the server, is rnd every time
-    guid: u64,
+    pub guid: u64,
     // The current tick of the server
     tick: usize,
+
+    // The cli
+    pub cli: Cli,
 }
 
 impl Server {
@@ -60,25 +71,31 @@ impl Server {
             players: vec![],
             guid: random(),
             tick: 0,
+            cli: Cli::new(),
         };
 
         return server_instance;
     }
 
     pub async fn start() {
-        log_info!("START SERVER");
+        info!("HELLO", "START SERVER");
+
+        rak_rs::rakrs_debug!("DD");
+
+        let server: Arc<Mutex<Server>> = Server::get_instance().await;
+        let mut server: MutexGuard<Server> = server.lock().await;
 
         let (running_sender, mut running_receiver) = tokio::sync::mpsc::channel(1);
-        let (update_motd_sender, mut update_motd_receiver) = tokio::sync::mpsc::channel(1);
+        let (update_motd_sender, update_motd_receiver) = tokio::sync::mpsc::channel::<bool>(1);
 
-        let _ = vec![
-            tokio::spawn(Server::handle_listener(update_motd_receiver)),
-            tokio::spawn(Server::start_ctrl_c_task(running_sender.clone())),
-            tokio::spawn(Server::start_cli_task(running_sender.clone())),
-            tokio::spawn(Server::start_tick_loop(update_motd_sender)),
-        ];
+        server.cli.start_cli(running_sender).await;
 
-        log_info!("SPAWNED EVERYTHING!");
+        tokio::spawn(Server::handle_listener(update_motd_receiver));
+        tokio::spawn(Server::tick_loop(update_motd_sender));
+
+        drop(server);
+
+        info!("SPAWNED EVERYTHING!");
 
         'running: loop {
             match running_receiver.recv().await.unwrap() {
@@ -88,156 +105,107 @@ impl Server {
     }
 
     pub async fn stop() {
-        log_info!("STOP SERVER");
+        info!("STOP SERVER");
     }
 
-    pub async fn update_motd(listener: &mut RaknetListener, server: &Server) {
-        log_info!("CURRENT MOTD: {}", listener.get_motd().await);
+    pub async fn tick_loop(update_motd_sender: Sender<bool>) {
+        // 20 ticks per sec, 1 tick every 50 mil-secs
+        let mut interval = time::interval(Duration::from_millis(50));
 
-        listener
-            .set_full_motd(format!(
-                "{};{};{};{};{};{};{};{};Survival;1;{};{};",
-                server.config.protocol_edition,
-                server.config.name,
-                server.config.protocol_version,
-                server.config.game_version,
-                random::<u8>(),
-                server.config.max_players,
-                server.guid,
-                server.config.motd,
-                server.config.port_v4,
-                server.config.port_v6,
-            ))
-            .unwrap();
-
-        log_info!(
-            "UPDATED MOTD: {}",
-            format!(
-                "{};{};{};{};{};{};{};{};Survival;1;{};{};",
-                server.config.protocol_edition,
-                server.config.name,
-                server.config.protocol_version,
-                server.config.game_version,
-                random::<u8>(),
-                server.config.max_players,
-                server.guid,
-                server.config.motd,
-                server.config.port_v4,
-                server.config.port_v6,
-            )
-        );
-    }
-
-    pub async fn start_tick_loop(update_motd_sender: Sender<bool>) {
-        let mut interval = time::interval(Duration::from_millis(5000));
-
-        log_info!("SPAWNED TICK LOOP");
+        info!("SPAWNED TICK LOOP");
 
         loop {
             interval.tick().await;
 
-            let mut server = Server::get_instance().await;
+            let server = Server::get_instance().await;
             let mut server = server.lock().await;
 
             server.tick += 1;
             tokio::spawn(Server::tick(server.tick.clone()));
-            update_motd_sender.send(true).await.unwrap();
+
+            let update_motd_sender = update_motd_sender.clone();
+
+            tokio::spawn(async move {
+                let _ = update_motd_sender.send(true);
+            });
         }
     }
 
     pub async fn tick(tick: usize) {
-        log_info!("TICK: {tick}")
     }
 
-    pub async fn build_raknet_listener() -> RaknetListener {
+    pub async fn build_raknet_listener() -> Listener {
         let server = &Server::get_instance().await;
         let server = &server.lock().await;
 
         let server_config = &server.config;
 
-        return match RaknetListener::bind(&SocketAddr::new(
+        return Listener::bind(SocketAddr::new(
             IpAddr::from(server_config.ip),
             server_config.port_v4,
-        ))
-        .await
-        {
-            Ok(v) => v,
-            Err(err) => {
-                log_error!("ERROR WHILE TRYING TO START SERVER: \n{err}")
-            }
-        };
+        )).await.unwrap_or_else(|_| {
+            error!("ERROR WHILE TRYING TO START SERVER")
+        });
     }
 
     async fn handle_listener(mut update_motd_receiver: Receiver<bool>) {
         let mut listener = Server::build_raknet_listener().await;
 
-        let server = Server::get_instance().await;
-        let server = server.lock().await;
+        update_motd(&mut listener).await;
 
-        drop(server);
+        listener.start().await.unwrap();
 
-        listener.listen().await;
+        info!("LISTENED!");
+        //exlog_info!("INFO:\nMOTD: {:#?}\nID: {:#?}\nVERSIONS: {:#?}", listener.motd, listener.id, listener.versions);
 
         loop {
-            select! {
-                socket = RaknetListener::accept(&mut listener) => {
-                    tokio::spawn(Server::handle_connection(socket.unwrap()));
-                }
-                _ = update_motd_receiver.recv() => {
-                    let server = Server::get_instance().await;
-                    let server = server.lock().await;
+            let conn = listener.accept().await.unwrap();
 
-                    Server::update_motd(&mut listener, &server).await;
-                }
-            }
+            //log_info!("INFO:\nMOTD: {:#?}\nID: {:#?}\nVERSIONS: {:#?}", listener.motd, listener.id, listener.versions);
+
+            tokio::spawn(Server::handle_connection(conn));
+            info!("SPAWNED CONNECTION!!");
+
+            //log_info!("SELECTING!");
+            //select! {
+            //    socket = listener.accept() => {
+            //        log_info!("SPAWNING CONNECTION!");
+            //        tokio::spawn(Server::handle_connection(socket.unwrap()));
+            //        log_info!("SPAWNED CONNECTION!!");
+            //    }
+            //    _ = update_motd_receiver.recv() => {
+//
+            //        log_info!("UPDATE MOTD!!");
+            //        //tokio::spawn(update_motd(&mut listener));
+            //        log_info!("UPDATED MOTD!!!");
+            //    }
+            //}
+            //log_info!("SELECTED!");
         }
     }
 
-    async fn handle_connection(raknet_socket: RaknetSocket) {
-        loop {
-            let data = raknet_socket.recv().await;
+    async fn handle_connection(mut connection: Connection) {
+        info!("HANDLE CONNECTION!");
+        'handle: loop {
+            let data = connection.recv().await;
             match data {
-                Err(error) => log_error!(
-                    "A Error occurred while handling new connections: {:?}",
-                    error
-                ),
+                Err(error) => {
+                    warning!("A Error occurred while handling new connections");
+                    connection.close().await;
+                    break 'handle;
+                }
                 Ok(buf) => {
-                    log_info!(
+                    info!(format!(
                         "NEW PACKET!\nDAT: {:?}\nSTR: {:?}",
                         buf,
                         String::from_utf8_lossy(&*buf)
-                    );
+                    ));
                 }
             }
         }
     }
 
-    async fn start_ctrl_c_task(sender: Sender<bool>) {
-        tokio::signal::ctrl_c().await.unwrap();
-        sender.send(false).await.unwrap();
-    }
 
-    async fn start_cli_task(sender: Sender<bool>) {
-        'input_cli: loop {
-            let mut buffer = String::new();
-            let data = std::io::stdin();
-            data.read_line(&mut buffer).unwrap();
 
-            match buffer
-                .strip_suffix(String::from_utf8_lossy(&[13, 10]).as_ref())
-                .unwrap()
-                .to_uppercase()
-                .as_str()
-            {
-                "EXIT" | "STOP" | "RETURN" | "END" | "KILL" => {
-                    break 'input_cli;
-                }
-                val => {
-                    log_info!("COMMAND NOT FOUND: {val}")
-                }
-            }
-        }
 
-        sender.send(false).await.unwrap();
-    }
 }

@@ -22,3 +22,6 @@ base64 = "0.21.5"
 toml = "0.8.8"
 lazy_static = "1.4"
 async_once = "0.2.6"
+input-macro = "0.2.0"
+async-trait = { version = "0.1.77", features = [] }
+chrono = "0.4.33"

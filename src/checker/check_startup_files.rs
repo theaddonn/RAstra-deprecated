@@ -1,4 +1,4 @@
-use crate::log_error;
+use crate::error;
 use std::env::current_exe;
 use std::process::exit;
 use tokio::fs;
@@ -23,27 +23,25 @@ async fn check_or_create_dir(path: &str) {
         false => match fs::create_dir(path).await {
             Ok(_) => {}
             Err(err) => {
-                log_error!(
+                error!(
                     "An Error occurred while trying to write a missing file: {:?}",
                     err
                 );
-                exit(1);
             }
         },
     };
 }
 
 async fn check_or_create_file(path: &str, data: &[u8]) {
-    return match folder_exits(path).await {
+    return match file_exits(path).await {
         true => {}
         false => match fs::write(path, data).await {
             Ok(_) => {}
             Err(err) => {
-                log_error!(
+                error!(
                     "An Error occurred while trying to write a missing file: {:?}",
                     err
                 );
-                exit(1);
             }
         },
     };
@@ -53,9 +51,9 @@ pub async fn check_all() {
     let mut current_exe_dir = current_exe().unwrap();
     current_exe_dir.pop();
 
-    check_or_create_file("config.toml", include_bytes!("default_config.toml")).await;
+    check_or_create_file("rastra.toml", include_bytes!("default_rastra.toml")).await;
 
-    check_or_create_dir("\\plugins").await;
-    check_or_create_dir("\\worlds").await;
-    check_or_create_dir("\\resource_packs").await;
+    check_or_create_dir("plugins").await;
+    check_or_create_dir("worlds").await;
+    check_or_create_dir("resource_packs").await;
 }
