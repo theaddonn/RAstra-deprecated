@@ -1,4 +1,9 @@
 /target
 .idea
-rastra.toml
+.vscode
 Cargo.lock
+
+plugins
+worlds
+resource_packs
+rastra.toml
