@@ -1,5 +1,5 @@
 [package]
-name = "RAstra"
+name = "rastra"
 version = "0.1.0"
 edition = "2021"
 
@@ -25,3 +25,5 @@ async_once = "0.2.6"
 input-macro = "0.2.0"
 async-trait = { version = "0.1.77", features = [] }
 chrono = "0.4.33"
+proc-macro2 = "1.0.78"
+log = "0.4.20"
