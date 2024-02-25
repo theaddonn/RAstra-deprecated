@@ -3,7 +3,7 @@ pub enum Gamemode {
     Survival = 0,
     Creative,
     Adventure,
-    Spectator
+    Spectator,
 }
 
 impl Gamemode {
@@ -18,10 +18,10 @@ impl Gamemode {
 
     pub fn get_id(&self) -> u8 {
         match self {
-            Gamemode::Survival => { 0 }
-            Gamemode::Creative => { 1 }
-            Gamemode::Adventure => { 2 }
-            Gamemode::Spectator => { 3 }
+            Gamemode::Survival => 0,
+            Gamemode::Creative => 1,
+            Gamemode::Adventure => 2,
+            Gamemode::Spectator => 3,
         }
     }
 }

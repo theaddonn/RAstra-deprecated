@@ -1,7 +1,9 @@
-use crate::utils::compression::CompressionMethod;
-use serde::Deserialize;
 use std::net::IpAddr;
 use std::path::Path;
+
+use serde::Deserialize;
+
+use crate::utils::compression::CompressionMethod;
 
 // This is the config struct which contains all the information needed to start & run the server
 // Serde toml generates this struct through the rastra.toml in the servers directory
@@ -31,9 +33,7 @@ pub struct Config {
 
 impl Config {
     pub async fn load() -> Config {
-        let data = tokio::fs::read(Path::new("rastra.toml"))
-            .await
-            .unwrap();
+        let data = tokio::fs::read(Path::new("rastra.toml")).await.unwrap();
 
         let config: Self = toml::from_str(&*String::from_utf8_lossy(&*data)).unwrap();
 

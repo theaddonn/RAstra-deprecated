@@ -1,10 +1,9 @@
 use async_trait::async_trait;
+
 use crate::cli::command::cli_command::CliCommand;
 use crate::info;
 
-pub struct CliHelpCommand {
-
-}
+pub struct CliHelpCommand {}
 
 #[async_trait]
 impl CliCommand for CliHelpCommand {

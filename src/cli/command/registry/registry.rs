@@ -9,12 +9,16 @@ pub struct RegistryCliCommand {
 }
 
 pub struct CliCommandRegistry {
-    pub commands: Vec<RegistryCliCommand>
+    pub commands: Vec<RegistryCliCommand>,
 }
 
 impl CliCommandRegistry {
-    pub async fn add_command(&mut self, command: Box<(dyn CliCommand + Send + Sync + 'static)>, name: String, description: String) -> Result<(), RastraError> {
-
+    pub async fn add_command(
+        &mut self,
+        command: Box<(dyn CliCommand + Send + Sync + 'static)>,
+        name: String,
+        description: String,
+    ) -> Result<(), RastraError> {
         // Check to not have duplicate cli commands.md
         for cli_command in &self.commands {
             if cli_command.name == name {
@@ -22,13 +26,11 @@ impl CliCommandRegistry {
             }
         }
 
-        self.commands.push(
-            RegistryCliCommand{
-                command,
-                name,
-                description
-            }
-        );
+        self.commands.push(RegistryCliCommand {
+            command,
+            name,
+            description,
+        });
 
         Ok(())
     }

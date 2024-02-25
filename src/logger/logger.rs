@@ -1,4 +1,3 @@
-
 #[macro_export]
 macro_rules! info {
     ($arg:expr) => {{
@@ -58,7 +57,7 @@ macro_rules! error {
         let second = chrono::DateTime::second(&now);
 
         println!("{}", format!("[ \x1b[38;5;196mERROR\x1b[0m \x1b[38;5;243m{:02}\x1b[0m\x1b[38;5;242m:\x1b[0m\x1b[38;5;243m{:02}\x1b[0m\x1b[38;5;242m:\x1b[0m\x1b[38;5;243m{:02}\x1b[0m ] {}", hour, minute, second, $arg));
-        exit(1);
+        std::process::exit(1);
     }};
     ($sender:expr, $arg:expr) => {{
         use chrono::Timelike;
@@ -69,6 +68,6 @@ macro_rules! error {
         let second = chrono::DateTime::second(&now);
 
         println!("{}", format!("[ \x1b[38;5;196mERROR\x1b[0m \x1b[38;5;243m{:02}\x1b[0m\x1b[38;5;242m:\x1b[0m\x1b[38;5;243m{:02}\x1b[0m\x1b[38;5;242m:\x1b[0m\x1b[38;5;243m{:02}\x1b[0m ] [ \x1b[38;5;126m{}\x1b[0m  ] {}", hour, minute, second, $sender, $arg));
-        exit(1);
+        std::process::exit(1);
     }};
 }

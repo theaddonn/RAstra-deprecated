@@ -1,10 +1,10 @@
-use core::option::Option;
 use input_macro::input;
 use tokio::sync::mpsc::Sender;
-use crate::cli::command::registry::registry::{CliCommandRegistry, RegistryCliCommand};
-use crate::{info, warning};
+
 use crate::cli::command::registry::register::register_commands;
+use crate::cli::command::registry::registry::CliCommandRegistry;
 use crate::server::Server;
+use crate::{info, warning};
 
 pub struct Cli {
     pub commands_registry: CliCommandRegistry,
@@ -13,14 +13,11 @@ pub struct Cli {
 impl Cli {
     pub fn new() -> Self {
         Self {
-            commands_registry: CliCommandRegistry{
-                commands: vec![],
-            },
+            commands_registry: CliCommandRegistry { commands: vec![] },
         }
     }
 
-    pub async fn start_cli(&mut self, running_sender: Sender<bool>){
-
+    pub async fn start_cli(&mut self, running_sender: Sender<bool>) {
         register_commands(self).await;
 
         for command in &self.commands_registry.commands {
@@ -34,15 +31,14 @@ impl Cli {
 
     async fn cli_task(sender: Sender<bool>) {
         'input_cli: loop {
-
             // request input and get rid of extra chars like whitespaces and newline
             let input = input!();
             let input = input.trim();
 
             // split into command name, and it's args, if there is just one word return empty rest
             let (name, rest) = match input.split_once(" ") {
-                Some(v) => {v},
-                None => { (input, "") },
+                Some(v) => v,
+                None => (input, ""),
             };
 
             // If there was no input, skip processing it and get next input
@@ -69,9 +65,6 @@ impl Cli {
             }
 
             warning!(format!("COMMAND {name:?} NOT FOUND!"))
-
-
-
         }
 
         sender.send(false).await.unwrap();

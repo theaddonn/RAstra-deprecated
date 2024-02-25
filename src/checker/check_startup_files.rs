@@ -1,7 +1,8 @@
-use crate::error;
 use std::env::current_exe;
-use std::process::exit;
+
 use tokio::fs;
+
+use crate::error;
 
 async fn folder_exits(path: &str) -> bool {
     return match fs::read_dir(path).await {

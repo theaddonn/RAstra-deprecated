@@ -44,34 +44,34 @@ pub enum Lang {
 impl Lang {
     pub fn as_str(&self) -> &'static str {
         match self {
-            Lang::id_ID => { "" }
-            Lang::da_DK => { "Danish" }
-            Lang::de_DE => { "German" }
-            Lang::en_GB => { "English (GB)" }
-            Lang::en_US => { "English (USA)" }
-            Lang::es_ES => { "Spanish (Spain)" }
-            Lang::es_MX => { "Spanish (Mexico)" }
-            Lang::fr_CA => { "French (Can)" }
-            Lang::fr_FR => { "French (France)" }
-            Lang::it_IT => { "Italian" }
-            Lang::hu_HU => { "Hungarian" }
-            Lang::nl_NL => { "Dutch" }
-            Lang::nb_NO => { "" }
-            Lang::pl_PL => { "Polish" }
-            Lang::pt_BR => { "" }
-            Lang::pt_PT => { "" }
-            Lang::sk_SK => { "" }
-            Lang::fi_FI => { "" }
-            Lang::sv_SE => { "" }
-            Lang::tr_TR => { "" }
-            Lang::cs_CZ => { "" }
-            Lang::el_GR => { "" }
-            Lang::bg_BG => { "" }
-            Lang::ru_RU => { "" }
-            Lang::ja_JP => { "" }
-            Lang::zh_CN => { "" }
-            Lang::zh_TW => { "" }
-            Lang::ko_KR => { "" }
+            Lang::id_ID => "",
+            Lang::da_DK => "Danish",
+            Lang::de_DE => "German",
+            Lang::en_GB => "English (GB)",
+            Lang::en_US => "English (USA)",
+            Lang::es_ES => "Spanish (Spain)",
+            Lang::es_MX => "Spanish (Mexico)",
+            Lang::fr_CA => "French (Can)",
+            Lang::fr_FR => "French (France)",
+            Lang::it_IT => "Italian",
+            Lang::hu_HU => "Hungarian",
+            Lang::nl_NL => "Dutch",
+            Lang::nb_NO => "",
+            Lang::pl_PL => "Polish",
+            Lang::pt_BR => "",
+            Lang::pt_PT => "",
+            Lang::sk_SK => "",
+            Lang::fi_FI => "",
+            Lang::sv_SE => "",
+            Lang::tr_TR => "",
+            Lang::cs_CZ => "",
+            Lang::el_GR => "",
+            Lang::bg_BG => "",
+            Lang::ru_RU => "",
+            Lang::ja_JP => "",
+            Lang::zh_CN => "",
+            Lang::zh_TW => "",
+            Lang::ko_KR => "",
         }
     }
 }
