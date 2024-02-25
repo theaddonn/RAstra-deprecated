@@ -1,18 +1,15 @@
-use crate::network::packet_info::{GamePacket, RAKNET_GAME_PACKET_ID};
 use bytes::BufMut;
 use varint_rs::VarintWriter;
 
+use crate::network::packet_info::GamePacket;
+
 pub struct PacketWriter {
-    packet_game_type: GamePacket,
     buf: Vec<u8>,
 }
 
 impl PacketWriter {
-    pub fn new_game_packet_writer(game_packet: GamePacket) -> Self {
-        Self {
-            packet_game_type: game_packet,
-            buf: vec![],
-        }
+    pub fn new_game_packet_writer() -> Self {
+        Self { buf: vec![] }
     }
 
     pub fn write_u8(&mut self, val: u8) {
@@ -61,30 +58,37 @@ impl PacketWriter {
         }
     }
 
-    pub fn write_uvarint(&mut self, val: usize) {
-        self.buf.write_usize_varint(val).unwrap();
+    pub fn write_u32_varint(&mut self, val: u32) {
+        self.buf.write_u32_varint(val).unwrap();
+    }
+    pub fn write_i32_varint(&mut self, val: i32) {
+        self.buf.write_i32_varint(val).unwrap();
+    }
+    pub fn write_u64_varint(&mut self, val: u64) {
+        self.buf.write_u64_varint(val).unwrap();
+    }
+    pub fn write_i64_varint(&mut self, val: i64) {
+        self.buf.write_i64_varint(val).unwrap();
     }
 
-    pub fn write_ivarint(&mut self, val: isize) {
-        self.buf.write_isize_varint(val).unwrap();
-    }
-
-    pub fn get_payload(&self) -> Vec<u8> {
+    pub fn get_payload(&self, game_packet: GamePacket) -> Vec<u8> {
         // The buffer used for storing the finished payload
         let mut buf: Vec<u8> = vec![];
 
         // A temp buffer where we write the gamepacket id (bcz it's size in bytes is unknown)
         let mut gamepacket_id_buf: Vec<u8> = vec![];
         gamepacket_id_buf
-            .write_usize_varint(self.packet_game_type.get_id())
+            .write_usize_varint(game_packet.get_id())
             .unwrap();
 
-        // Write the RakNet identifier for Gamepackets
-        buf.put_u8(RAKNET_GAME_PACKET_ID);
+        // Write Length as varint
         buf.write_usize_varint(self.buf.len() + gamepacket_id_buf.len())
             .unwrap();
 
+        // Write gamepacket id to buf
         buf.put_slice(&*gamepacket_id_buf);
+
+        // Write packet data to buf
         buf.put_slice(&*self.buf);
 
         return buf;
