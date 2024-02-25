@@ -1,10 +1,11 @@
+use rak_rs::connection::Connection;
+use uuid::Uuid;
+
 use crate::error::RastraError;
-use crate::network::conn_info::{ConnInfo};
+use crate::network::conn_info::ConnInfo;
 use crate::utils::device::Device;
 use crate::utils::lang::Lang;
 use crate::utils::skin::skin::Skin;
-use rak_rs::connection::Connection;
-use uuid::Uuid;
 
 pub struct Player {
     name: String,
@@ -27,11 +28,12 @@ pub struct Player {
 impl Player {
     pub fn send_text() {}
 
-    pub async fn kick(&self, _message: String, _hide_disconnect_screen: bool) -> Result<(), RastraError> {
-        self.connection
-            .send(&[], false)
-            .await
-            .unwrap();
+    pub async fn kick(
+        &self,
+        _message: String,
+        _hide_disconnect_screen: bool,
+    ) -> Result<(), RastraError> {
+        self.connection.send(&[], false).await.unwrap();
         Ok(())
     }
 }

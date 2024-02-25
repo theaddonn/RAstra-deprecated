@@ -1,18 +1,19 @@
-use crate::checker::check_startup_files::check_all;
-use crate::server::Server;
 use std::process::exit;
 
+use crate::checker::check_startup_files::check_all;
+use crate::server::Server;
+
 mod checker;
+mod cli;
 mod config;
 mod error;
+mod gamemode;
 mod logger;
+mod motd;
 mod network;
 mod player;
 mod server;
 mod utils;
-mod gamemode;
-mod cli;
-mod motd;
 
 #[tokio::main]
 async fn main() {
