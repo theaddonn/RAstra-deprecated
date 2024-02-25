@@ -6,9 +6,11 @@ pub enum RastraError {
     ServerDeviceOsUnknown,
     ServerArmSizeUnknown,
     ServerColorHexInvalid,
-    ServerPlayerNotConnected,
 
-    PacketWriterInvalidVarint,
+    CliCommandNameAlreadyTaken,
 
-    CliCommandNameAlreadyTaken
+    CouldNotSerialize,
+    CouldNotDeserialize,
+
+    ReadPacketBufferError,
 }
