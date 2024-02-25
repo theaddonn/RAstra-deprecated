@@ -1,30 +1,39 @@
-use crate::config::config::Config;
-use crate::player::Player;
-use crate::{error, info, warning};
-use async_once::AsyncOnce;
-use lazy_static::lazy_static;
-use rand::random;
+use std::clone::Clone;
 use std::env;
+use std::io::Error;
 use std::net::{IpAddr, SocketAddr};
 use std::process::exit;
-use std::sync::{Arc};
+use std::sync::Arc;
 use std::time::Duration;
-use rak_rs::Listener;
+
+use async_once::AsyncOnce;
+use bytes::Buf;
+use lazy_static::lazy_static;
 use rak_rs::connection::Connection;
+use rak_rs::Listener;
+use rand::random;
 use tokio::sync::mpsc::{Receiver, Sender};
 use tokio::sync::{Mutex, MutexGuard};
 use tokio::{select, time};
+use varint_rs::VarintReader;
+
 use crate::cli::cli::Cli;
+use crate::config::config::Config;
 use crate::motd::update::update_motd;
-use std::clone::Clone;
+use crate::network::batching::debatch_packet_stream;
+use crate::network::gamepacket::GamepacketClient;
+use crate::network::packet::packet_request_network_settings::PacketRequestNetworkSettings;
+use crate::network::packet_info::GamePacket::RequestNetworkSettings;
+use crate::network::{listener, packet};
+use crate::player::Player;
+use crate::{error, info, warning};
 
 // Load server instance as a sort of singleton
 // Make it a static ref to be accessible on the entire file
 // Load it just on use through lazy-static and init it asynchronous
 lazy_static! {
-    static ref SERVER_INSTANCE: AsyncOnce<Arc<Mutex<Server>>> = AsyncOnce::new( async {
-        Arc::new(Mutex::new(Server::init().await))
-    });
+    static ref SERVER_INSTANCE: AsyncOnce<Arc<Mutex<Server>>> =
+        AsyncOnce::new(async { Arc::new(Mutex::new(Server::init().await)) });
 }
 
 /// The main Server struct of RAstra
@@ -78,7 +87,7 @@ impl Server {
     }
 
     pub async fn start() {
-        info!("HELLO", "START SERVER");
+        info!("START SERVER");
 
         rak_rs::rakrs_debug!("DD");
 
@@ -90,7 +99,7 @@ impl Server {
 
         server.cli.start_cli(running_sender).await;
 
-        tokio::spawn(Server::handle_listener(update_motd_receiver));
+        tokio::spawn(listener::handle_listener(update_motd_receiver));
         tokio::spawn(Server::tick_loop(update_motd_sender));
 
         drop(server);
@@ -131,8 +140,7 @@ impl Server {
         }
     }
 
-    pub async fn tick(tick: usize) {
-    }
+    pub async fn tick(tick: usize) {}
 
     pub async fn build_raknet_listener() -> Listener {
         let server = &Server::get_instance().await;
@@ -143,69 +151,8 @@ impl Server {
         return Listener::bind(SocketAddr::new(
             IpAddr::from(server_config.ip),
             server_config.port_v4,
-        )).await.unwrap_or_else(|_| {
-            error!("ERROR WHILE TRYING TO START SERVER")
-        });
+        ))
+        .await
+        .unwrap_or_else(|e| error!("ERROR WHILE TRYING TO START SERVER"));
     }
-
-    async fn handle_listener(mut update_motd_receiver: Receiver<bool>) {
-        let mut listener = Server::build_raknet_listener().await;
-
-        update_motd(&mut listener).await;
-
-        listener.start().await.unwrap();
-
-        info!("LISTENED!");
-        //exlog_info!("INFO:\nMOTD: {:#?}\nID: {:#?}\nVERSIONS: {:#?}", listener.motd, listener.id, listener.versions);
-
-        loop {
-            let conn = listener.accept().await.unwrap();
-
-            //log_info!("INFO:\nMOTD: {:#?}\nID: {:#?}\nVERSIONS: {:#?}", listener.motd, listener.id, listener.versions);
-
-            tokio::spawn(Server::handle_connection(conn));
-            info!("SPAWNED CONNECTION!!");
-
-            //log_info!("SELECTING!");
-            //select! {
-            //    socket = listener.accept() => {
-            //        log_info!("SPAWNING CONNECTION!");
-            //        tokio::spawn(Server::handle_connection(socket.unwrap()));
-            //        log_info!("SPAWNED CONNECTION!!");
-            //    }
-            //    _ = update_motd_receiver.recv() => {
-//
-            //        log_info!("UPDATE MOTD!!");
-            //        //tokio::spawn(update_motd(&mut listener));
-            //        log_info!("UPDATED MOTD!!!");
-            //    }
-            //}
-            //log_info!("SELECTED!");
-        }
-    }
-
-    async fn handle_connection(mut connection: Connection) {
-        info!("HANDLE CONNECTION!");
-        'handle: loop {
-            let data = connection.recv().await;
-            match data {
-                Err(error) => {
-                    warning!("A Error occurred while handling new connections");
-                    connection.close().await;
-                    break 'handle;
-                }
-                Ok(buf) => {
-                    info!(format!(
-                        "NEW PACKET!\nDAT: {:?}\nSTR: {:?}",
-                        buf,
-                        String::from_utf8_lossy(&*buf)
-                    ));
-                }
-            }
-        }
-    }
-
-
-
-
 }
