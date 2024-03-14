@@ -10,8 +10,8 @@
 > Changes may happen, and we will try to improve RAstra further
 
 ## Why?
-###### RAstra is a Server Software written in Rust which has many perks as such:
-- 🚀 Blazingly Fast and Secure (due to being written in Rust)
-- 📜 Multi-Protocol Management
-- 🌟 Amazing Community
+###### RAstra is a mostly asynchronous Server Software written in Rust which has many perks, such as:
+- 🚀 Blazingly Fast and Secure
+- 📜 ~~Multi-Protocol Management~~
+- 🌟 ~~Amazing Community~~
 
