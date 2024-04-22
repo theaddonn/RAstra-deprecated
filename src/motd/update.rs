@@ -1,5 +1,5 @@
-use rak_rs::mcpe::motd::Gamemode;
 use rak_rs::{Listener, Motd};
+use rak_rs::mcpe::motd::Gamemode;
 use rand::random;
 
 use crate::server::Server;
@@ -20,7 +20,7 @@ pub async fn update_motd(listener: &mut Listener) {
 
     listener.motd = Motd {
         name,
-        protocol,
+        protocol: protocol.try_into().unwrap(),
         version,
         player_count,
         player_max,

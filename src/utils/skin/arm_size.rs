@@ -1,6 +1,7 @@
 use crate::error::RastraError;
-use crate::error::RastraError::ServerArmSizeUnknown;
+use crate::error::RastraError::ArmSizeUnknown;
 
+#[derive(Debug)]
 pub enum ArmSize {
     SLIM,
     WIDE,
@@ -11,7 +12,7 @@ impl ArmSize {
         match val.to_lowercase().as_str() {
             "wide" => Ok(ArmSize::WIDE),
             "slim" => Ok(ArmSize::SLIM),
-            _ => Err(ServerArmSizeUnknown),
+            _ => Err(ArmSizeUnknown),
         }
     }
 

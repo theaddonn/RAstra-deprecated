@@ -2,10 +2,11 @@ use std::fmt::Debug;
 
 #[derive(Debug)]
 pub enum RastraError {
-    ServerGamepacketUnknown,
-    ServerDeviceOsUnknown,
-    ServerArmSizeUnknown,
-    ServerColorHexInvalid,
+    GamepacketUnknown,
+    DeviceOsUnknown,
+    ArmSizeUnknown,
+    CompressionMethodUnknown,
+    ColorHexInvalid,
 
     CliCommandNameAlreadyTaken,
 
@@ -13,4 +14,16 @@ pub enum RastraError {
     CouldNotDeserialize,
 
     ReadPacketBufferError,
+    DecompressionError,
+    CompressionError,
+    RaknetPacketIdError,
+    PacketBatchExceedsMaxError,
+    RecvError,
+    SendError,
+
+    PlayerNotOnlineError,
+    WrongProtocolVersionError,
+    UTF8StringError,
+    JWTError,
+    EcdsaKeyError
 }

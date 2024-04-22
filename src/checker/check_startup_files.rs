@@ -2,7 +2,7 @@ use std::env::current_exe;
 
 use tokio::fs;
 
-use crate::error;
+use crate::log_error;
 
 async fn folder_exits(path: &str) -> bool {
     return match fs::read_dir(path).await {
@@ -24,7 +24,7 @@ async fn check_or_create_dir(path: &str) {
         false => match fs::create_dir(path).await {
             Ok(_) => {}
             Err(err) => {
-                error!(
+                log_error!(
                     "An Error occurred while trying to write a missing file: {:?}",
                     err
                 );
@@ -39,7 +39,7 @@ async fn check_or_create_file(path: &str, data: &[u8]) {
         false => match fs::write(path, data).await {
             Ok(_) => {}
             Err(err) => {
-                error!(
+                log_error!(
                     "An Error occurred while trying to write a missing file: {:?}",
                     err
                 );

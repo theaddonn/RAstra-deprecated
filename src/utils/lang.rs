@@ -1,4 +1,5 @@
 #[allow(non_snake_case, non_camel_case_types)]
+#[derive(Debug)]
 pub enum Lang {
     id_ID,
     /// Danish in Denmark

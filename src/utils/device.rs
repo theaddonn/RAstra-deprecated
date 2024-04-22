@@ -1,10 +1,12 @@
 use crate::error::RastraError;
-use crate::error::RastraError::ServerDeviceOsUnknown;
+use crate::error::RastraError::DeviceOsUnknown;
 
+#[derive(Debug)]
 enum DeviceOS {
     Android,
     IOS,
-    OSX, // MacOS
+    OSX,
+    // MacOS
     FireOS,
     GearVR,
     Hololens,
@@ -13,13 +15,12 @@ enum DeviceOS {
     Dedicated,
     #[deprecated(since = "1.20.10", note = "TVOS is not supported anymore!")]
     TVOS,
-    Orbis, // PlayStation
+    Orbis,
+    // PlayStation
     NX,
+    // Nintendo Switch
     XBOX,
-    #[deprecated(
-        since = "1.20.10",
-        note = "The Windows phone is not supported anymore!"
-    )]
+    #[deprecated(since = "1.20.10", note = "Windows phone is not supported anymore!")]
     WP, // Windows Phone
 }
 
@@ -61,11 +62,12 @@ impl DeviceOS {
             12 => Ok(DeviceOS::Android),
             13 => Ok(DeviceOS::Android),
             14 => Ok(DeviceOS::Android),
-            _ => Err(ServerDeviceOsUnknown),
+            _ => Err(DeviceOsUnknown),
         }
     }
 }
 
+#[derive(Debug)]
 pub struct Device {
     os: DeviceOS,
     model: String,

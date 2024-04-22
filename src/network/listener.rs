@@ -1,8 +1,9 @@
 use tokio::sync::mpsc::Receiver;
 
-use crate::info;
+use crate::log_info;
 use crate::motd::update::update_motd;
-use crate::network::conn;
+use crate::network::conn_handle;
+use crate::network::connection::connection::ConnectionWrapper;
 use crate::server::Server;
 
 pub async fn handle_listener(mut update_motd_receiver: Receiver<bool>) {
@@ -12,14 +13,16 @@ pub async fn handle_listener(mut update_motd_receiver: Receiver<bool>) {
 
     listener.start().await.unwrap();
 
-    info!("LISTENED!");
+    log_info!("LISTENED!");
 
     loop {
         let connection = listener.accept().await.unwrap();
+        log_info!("SPAWNING CONNECTION!");
 
-        info!("SPAWNING CONNECTION!");
-        tokio::spawn(conn::handle_connection(connection));
-        info!("SPAWNED CONNECTION!!");
+        let conn_wrapper = ConnectionWrapper::new(connection).await;
+
+        tokio::spawn(conn_handle::handle_connection(conn_wrapper));
+        log_info!("SPAWNED CONNECTION!");
 
         //log_info!("SELECTING!");
         //select! {

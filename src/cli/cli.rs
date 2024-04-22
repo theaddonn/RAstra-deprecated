@@ -1,10 +1,10 @@
 use input_macro::input;
 use tokio::sync::mpsc::Sender;
 
+use crate::{log_info, log_warning};
 use crate::cli::command::registry::register::register_commands;
 use crate::cli::command::registry::registry::CliCommandRegistry;
 use crate::server::Server;
-use crate::{info, warning};
 
 pub struct Cli {
     pub commands_registry: CliCommandRegistry,
@@ -21,7 +21,7 @@ impl Cli {
         register_commands(self).await;
 
         for command in &self.commands_registry.commands {
-            info!(command.name.to_uppercase());
+            log_info!(command.name.to_uppercase());
         }
 
         let _ = tokio::spawn(Self::cli_task(running_sender.clone()));
@@ -64,7 +64,7 @@ impl Cli {
                 }
             }
 
-            warning!(format!("COMMAND {name:?} NOT FOUND!"))
+            log_warning!(format!("COMMAND {name:?} NOT FOUND!"))
         }
 
         sender.send(false).await.unwrap();

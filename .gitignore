@@ -1,7 +1,7 @@
-/target
-.idea
-.vscode
-Cargo.lock
+**/target/
+/.idea
+/.vscode
+**/Cargo.lock
 
 plugins
 worlds

@@ -1,5 +1,5 @@
 #[macro_export]
-macro_rules! info {
+macro_rules! log_info {
     ($arg:expr) => {{
         use chrono::Timelike;
 
@@ -23,7 +23,7 @@ macro_rules! info {
 }
 
 #[macro_export]
-macro_rules! warning {
+macro_rules! log_warning {
     ($arg:expr) => {{
         use chrono::Timelike;
 
@@ -47,7 +47,7 @@ macro_rules! warning {
 }
 
 #[macro_export]
-macro_rules! error {
+macro_rules! log_error {
     ($arg:expr) => {{
         use chrono::Timelike;
 

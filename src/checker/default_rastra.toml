@@ -1,3 +1,5 @@
+lang = "eng"
+
 ip = "127.0.0.1"
 port_v4 = 19132
 port_v6 = 19133
@@ -5,16 +7,20 @@ port_v6 = 19133
 name = "my server"
 motd = "my motd"
 
-compression = "Flate"
-
 auto_update_current_players = true
 max_players = 100
 
 debug_messages = true
 
-protocol_version = 630
+protocol_version = 662
 force_protocol_version = false
 protocol_edition = "MCPE"
 
-game_version = "1.20.51"
-force_version = false
+compression_enabled = true
+compression_threshold = 1
+compression_method = "Flate"
+client_throttle_enabled = false
+client_throttle_threshold = 0
+client_throttle_scalar = 0.0
+
+game_version = "1.20.71"
