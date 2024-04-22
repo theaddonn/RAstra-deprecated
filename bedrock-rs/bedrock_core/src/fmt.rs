@@ -105,3 +105,29 @@ impl fmt::Display for u128be {
         write!(f, "{:?}", self.data.to_string().as_str())
     }
 }
+
+// f32
+impl fmt::Display for f32le {
+    fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
+        write!(f, "{:?}", self.data.to_string().as_str())
+    }
+}
+
+impl fmt::Display for f32be {
+    fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
+        write!(f, "{:?}", self.data.to_string().as_str())
+    }
+}
+
+// f64
+impl fmt::Display for f64le {
+    fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
+        write!(f, "{:?}", self.data.to_string().as_str())
+    }
+}
+
+impl fmt::Display for f64be {
+    fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
+        write!(f, "{:?}", self.data.to_string().as_str())
+    }
+}
