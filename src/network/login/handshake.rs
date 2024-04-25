@@ -6,15 +6,14 @@ use signature::rand_core::OsRng;
 use crate::error::RastraError;
 use crate::network::conn_info::ConnInfo;
 use crate::network::connection::connection::{ConnectionReadHalf, ConnectionWriteHalf};
-use crate::network::packet_info::{GamePacket, MOJANG_JWT_ALG, MOJANG_PUBLIC_JWT_KEY};
+use crate::network::info::{GamePacket, MOJANG_JWT_ALG, MOJANG_PUBLIC_JWT_KEY};
 use crate::network::utils::handler::encode;
 use p384::ecdsa::{SigningKey, VerifyingKey};
 use p384::pkcs8::{Document, EncodePrivateKey, EncodePublicKey};
 use p384::pkcs8::der::{Decode, Encode};
 use p384::SecretKey;
 use rak_rs::connection::RecvError;
-use bedrock_rs::protocol::packet_io::packet_writer::PacketWriter;
-use bedrock_rs::protocol::info::GamePacket;
+use bedrock_rs::protocol::info::GamePacketType;
 use crate::{log_info, log_warning};
 
 pub async fn handle_handshake(connection_read_half: &mut ConnectionReadHalf, connection_write_half: &ConnectionWriteHalf, conn_info: &mut ConnInfo) -> Result<(), RastraError> {
@@ -52,7 +51,7 @@ pub async fn handle_handshake(connection_read_half: &mut ConnectionReadHalf, con
 
     pk_writer.write_string(jwt_token);
 
-    let data = pk_writer.get_payload(GamePacket::ServerToClientHandshake);
+    let data = pk_writer.get_payload(GamePacketType::ServerToClientHandshake);
 
     let ser_data = encode(vec![data], conn_info).await.unwrap();
 
