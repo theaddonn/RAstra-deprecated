@@ -9,4 +9,5 @@ edition = "2021"
 bedrock-rs = { path = "../bedrock-rs" }
 
 
-tokio = { version = "1.37.0", features = ["full"]}
+tokio = { version = "1.37.0", features = ["full"] }
+raknet-rs = { version = "0.1.1", features = ["tokio-udp"] }
