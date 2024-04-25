@@ -1,3 +1,4 @@
+workspace = { members = [ "protocol","serialize"] }
 [package]
 name = "bedrock-rs"
 version = "0.1.0"
@@ -7,5 +8,8 @@ edition = "2021"
 
 [dependencies]
 bedrock_core = { path = "bedrock_core" }
-protocol_core = { path = "protocol_core" }
-protocol_derive = { path = "protocol_derive" }
+
+protocol = { path = "protocol" }
+
+serialize = { path = "serialize" }
+serialize_derive = { path = "serialize_derive" }

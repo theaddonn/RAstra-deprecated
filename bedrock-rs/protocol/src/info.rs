@@ -7,7 +7,7 @@ pub const MAGIC: [u8; 16] = [
 ];
 
 #[derive(Debug, Copy, Clone, Eq, PartialEq)]
-pub enum GamePacket {
+pub enum GamePacketType {
     Login = 1,
     PlayStatus = 2,
     ServerToClientHandshake = 3,

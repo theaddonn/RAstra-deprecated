@@ -1,5 +1,5 @@
 [package]
-name = "protocol_derive"
+name = "serialize_derive"
 version = "0.1.0"
 edition = "2021"
 
@@ -10,8 +10,9 @@ proc-macro = true
 
 [dependencies]
 bedrock_core = { path = "../bedrock_core" }
-protocol_core = { path = "../protocol_core" }
+serialize = { path = "../serialize" }
 
 proc-macro2 = "1.0.81"
 syn = "2.0.60"
 quote = "1.0.36"
+bytes = "1.6.0"

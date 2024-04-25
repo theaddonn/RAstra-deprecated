@@ -1,5 +1,5 @@
 [package]
-name = "protocol_core"
+name = "protocol"
 version = "0.1.0"
 edition = "2021"
 
@@ -7,6 +7,8 @@ edition = "2021"
 
 [dependencies]
 bedrock_core = { path = "../bedrock_core" }
+serialize = { path = "../serialize" }
+serialize_derive = { path = "../serialize_derive" }
 
 bytes = "1.6.0"
 varint-rs = "2.2.0"
