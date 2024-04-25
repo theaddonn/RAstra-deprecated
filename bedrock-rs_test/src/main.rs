@@ -1,41 +1,18 @@
-use std::io::Cursor;
-use bedrock_rs::core::types::{i64be, i64le};
-use bedrock_rs::protocol::error::ProtocolError;
-use bedrock_rs::protocol::GamepacketSerialize;
-use bedrock_rs::protocol::gamepacket::{Deserialize, GamepacketSerialize, Serialize};
+use std::net::{Ipv4Addr, SocketAddrV4};
+use tokio::main;
+use tokio::net::UdpSocket;
 
-#[derive(Debug, Default)]
-struct NetworkSettings {
-    id: i64,
-    compression_method: i16
-}
+#[main]
+async fn main() {
+    let socket = UdpSocket::bind(SocketAddrV4::new(
+        Ipv4Addr::new(127, 0, 0, 1),
+        19132
+    )).await.unwrap();
 
-#[derive(Debug, Default, GamepacketSerialize)]
-struct Help {
-    i: i64,
-    settings: NetworkSettings,
-}
+    println!("{:?}", socket.local_addr().unwrap());
 
-impl Serialize for Help {
-    fn serialize(&self) -> Result<Vec<u8>, ProtocolError> where Self: Sized {
-        self.i.serialize()
-    }
-}
+    let mut buf = vec![0; 1024*2*2*2*2*2*2];
+    socket.recv(&mut buf).await.unwrap();
+    println!("{:?}", buf);
 
-fn main() {
-    let help = Help::default();
-    
-    println!("{:?}", help.to_packet());
-
-    use bedrock_rs::protocol::gamepacket::GamepacketSerialize;
-    
-    println!("Hello, world!");
-
-    let data: i64be = 42.into();
-
-    let bin = data.serialize().unwrap();
-
-    let data2: i64be =  i64be::deserialize(&mut Cursor::new(bin)).unwrap();
-
-    println!("{:?} == {:?}", data2, i64be { data: 42 });
 }
