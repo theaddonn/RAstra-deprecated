@@ -1,4 +1,3 @@
-workspace = { members = [ "protocol","serialize"] }
 [package]
 name = "bedrock-rs"
 version = "0.1.0"
