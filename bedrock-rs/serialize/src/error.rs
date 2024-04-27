@@ -7,5 +7,5 @@ pub enum SerilizationError {
 pub enum DeserilizationError {
     NotEnoughtRemainingError,
     ReadVarintError,
-    ReadUtf8StringError
+    ReadUtf8StringError,
 }

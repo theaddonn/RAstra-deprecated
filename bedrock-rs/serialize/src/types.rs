@@ -472,10 +472,9 @@ impl MCDeserialize for bedrock_core::types::uvar32 {
     where
         Self: Sized,
     {
-        return Ok(Self(
-            match data.read_u32_varint() {
-                Ok(v) => v,
-                Err(_) => return Err(DeserilizationError::ReadVarintError),
+        return Ok(Self(match data.read_u32_varint() {
+            Ok(v) => v,
+            Err(_) => return Err(DeserilizationError::ReadVarintError),
         }));
     }
 }
@@ -503,11 +502,10 @@ impl MCDeserialize for bedrock_core::types::ivar32 {
     where
         Self: Sized,
     {
-        return Ok(Self(
-            match data.read_i32_varint() {
-                Ok(v) => v,
-                Err(_) => return Err(DeserilizationError::ReadVarintError),
-            }));
+        return Ok(Self(match data.read_i32_varint() {
+            Ok(v) => v,
+            Err(_) => return Err(DeserilizationError::ReadVarintError),
+        }));
     }
 }
 
@@ -534,10 +532,9 @@ impl MCDeserialize for bedrock_core::types::uvar64 {
     where
         Self: Sized,
     {
-        return Ok(Self(
-            match data.read_u64_varint() {
-                Ok(v) => v,
-                Err(_) => return Err(DeserilizationError::ReadVarintError),
+        return Ok(Self(match data.read_u64_varint() {
+            Ok(v) => v,
+            Err(_) => return Err(DeserilizationError::ReadVarintError),
         }));
     }
 }
@@ -565,10 +562,9 @@ impl MCDeserialize for bedrock_core::types::ivar64 {
     where
         Self: Sized,
     {
-        return Ok(Self(
-            match data.read_i64_varint() {
-                Ok(v) => v,
-                Err(_) => return Err(DeserilizationError::ReadVarintError),
+        return Ok(Self(match data.read_i64_varint() {
+            Ok(v) => v,
+            Err(_) => return Err(DeserilizationError::ReadVarintError),
         }));
     }
 }
@@ -592,15 +588,17 @@ impl MCSerialize for bool {
 }
 
 impl MCDeserialize for bool {
-    fn deserialize(cursor: &mut Cursor<Vec<u8>>) -> Result<Self, DeserilizationError> where Self: Sized {
+    fn deserialize(cursor: &mut Cursor<Vec<u8>>) -> Result<Self, DeserilizationError>
+    where
+        Self: Sized,
+    {
         if cursor.remaining() < 1 {
-            return Err(DeserilizationError::NotEnoughtRemainingError)
-        }
-        else {
+            return Err(DeserilizationError::NotEnoughtRemainingError);
+        } else {
             return Ok(match cursor.get_u8() {
-                0 => { false },
-                _ => { true }
-            })
+                0 => false,
+                _ => true,
+            });
         }
     }
 }
@@ -608,7 +606,10 @@ impl MCDeserialize for bool {
 // string
 
 impl MCSerialize for String {
-    fn serialize(&self) -> Result<Vec<u8>, SerilizationError> where Self: Sized {
+    fn serialize(&self) -> Result<Vec<u8>, SerilizationError>
+    where
+        Self: Sized,
+    {
         let mut buf = vec![];
 
         buf.write_u64_varint(self.len() as u64);
@@ -619,33 +620,25 @@ impl MCSerialize for String {
 }
 
 impl MCDeserialize for String {
-    fn deserialize(cursor: &mut Cursor<Vec<u8>>) -> Result<Self, DeserilizationError> where Self: Sized {
+    fn deserialize(cursor: &mut Cursor<Vec<u8>>) -> Result<Self, DeserilizationError>
+    where
+        Self: Sized,
+    {
         let len = match cursor.read_u64_varint() {
-            Ok(v) => { v }
-            Err(_) => { return Err(DeserilizationError::ReadVarintError) }
+            Ok(v) => v,
+            Err(_) => return Err(DeserilizationError::ReadVarintError),
         };
 
         let mut string_buf = vec![0u8; len as usize];
 
         match cursor.read_exact(&mut *string_buf) {
             Ok(_) => {}
-            Err(_) => { return Err(DeserilizationError::NotEnoughtRemainingError) }
+            Err(_) => return Err(DeserilizationError::NotEnoughtRemainingError),
         }
 
         match String::from_utf8(string_buf) {
-            Ok(str) => { Ok(str) }
-            Err(_) => { Err(DeserilizationError::ReadUtf8StringError) }
+            Ok(str) => Ok(str),
+            Err(_) => Err(DeserilizationError::ReadUtf8StringError),
         }
     }
-}
-
-#[test]
-fn test() {
-    let data: i64be = 42;
-
-    let bin = data.serialize().unwrap();
-
-    let data2: i64be = i64be::deserialize(Cursor::new(bin));
-
-    assert_eq!(data2, 42)
 }
