@@ -168,7 +168,7 @@ impl MCDeserialize for ConnectionRequestType {
                     }
                 }
             }
-            o => {
+            _ => {
                 // the certificate chain should always be a object with just an array of jwts called "chain"
                 return Err(DeserilizationError::ReadJsonError);
             }
@@ -177,7 +177,7 @@ impl MCDeserialize for ConnectionRequestType {
         for jwt_json in certificate_chain_json_jwts {
             let jwt_string = match jwt_json {
                 Value::String(str) => str,
-                o => {
+                _ => {
                     // the certificate chain's should always be a jwt string
                     return Err(DeserilizationError::ReadJsonError);
                 }
