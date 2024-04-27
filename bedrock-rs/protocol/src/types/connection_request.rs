@@ -85,6 +85,8 @@ impl MCSerialize for ConnectionRequestType {
     where
         Self: Sized,
     {
+        todo!();
+
         let mut buf = vec![];
 
         // Write entire length
