@@ -8,4 +8,6 @@ pub enum DeserilizationError {
     NotEnoughtRemainingError,
     ReadVarintError,
     ReadUtf8StringError,
+    ReadJsonError,
+    ReadJwtError,
 }
