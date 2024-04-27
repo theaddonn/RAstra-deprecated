@@ -3,7 +3,7 @@ use std::io::{Cursor, Read};
 
 use bytes::Buf;
 use serde_json::Value;
-use varint_rs::{VarintReader, VarintWriter};
+use varint_rs::VarintReader;
 
 use serialize::de::MCDeserialize;
 use serialize::error::{DeserilizationError, SerilizationError};

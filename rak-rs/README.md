@@ -6,7 +6,8 @@ A fully functional RakNet implementation in pure rust, asynchronously driven.
 
 ## Getting Started
 
-RakNet (rak-rs) is available on [crates.io](https://crates.io/crates/rak-rs), to use it, add the following to your `Cargo.toml`:
+RakNet (rak-rs) is available on [crates.io](https://crates.io/crates/rak-rs), to use it, add the following to
+your `Cargo.toml`:
 
 ```toml
 [dependencies]
@@ -15,7 +16,8 @@ rak-rs = "0.3.2"
 
 ## Features
 
-This RakNet implementation comes with 3 primary features, `async_std`, `async_tokio` and `mcpe`.  However, by default, only `async_std` is enabled, and `mcpe` requires you to modify your `Cargo.toml`.
+This RakNet implementation comes with 3 primary features, `async_std`, `async_tokio` and `mcpe`. However, by default,
+only `async_std` is enabled, and `mcpe` requires you to modify your `Cargo.toml`.
 
 If you wish to use these features, add them to your `Cargo.toml` as seen below:
 
@@ -24,14 +26,16 @@ If you wish to use these features, add them to your `Cargo.toml` as seen below:
 rak-rs = { version = "0.3.2", default-features = false, features = [ "async_tokio", "mcpe" ] }
 ```
 
-
-
 rak-rs also provides the following modules:
 
-- [`rak_rs::client`](https://docs.rs/rak-rs/latest/rak-rs/client) - A client implementation of RakNet, allowing you to connect to a RakNet server.
-- [`rak_rs::connection`](https://docs.rs/rak-rs/latest/rak-rs/client) - A bare-bones implementation of a Raknet peer, this is mainly used for types.
-- [`rak_rs::error`](https://docs.rs/rak-rs/latest/rak-rs/error) - A module with errors that both the Client and Server can respond with.
-- [`rak_rs::protocol`](https://docs.rs/rak-rs/latest/rak-rs/protocol) - A lower level implementation of RakNet, responsible for encoding and decoding packets.
+- [`rak_rs::client`](https://docs.rs/rak-rs/latest/rak-rs/client) - A client implementation of RakNet, allowing you to
+  connect to a RakNet server.
+- [`rak_rs::connection`](https://docs.rs/rak-rs/latest/rak-rs/client) - A bare-bones implementation of a Raknet peer,
+  this is mainly used for types.
+- [`rak_rs::error`](https://docs.rs/rak-rs/latest/rak-rs/error) - A module with errors that both the Client and Server
+  can respond with.
+- [`rak_rs::protocol`](https://docs.rs/rak-rs/latest/rak-rs/protocol) - A lower level implementation of RakNet,
+  responsible for encoding and decoding packets.
 - [`rak_rs::server`](https://docs.rs/rak-rs/latest/rak-rs/server) - The base server implementation of RakNet.
 - [`rak_rs::util`](https://docs.rs/rak-rs/latest/rak-rs/utils)  - General utilities used within `rak-rs`.
 

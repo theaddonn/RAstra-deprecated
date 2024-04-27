@@ -156,7 +156,8 @@ pub struct UnconnectedPong {
 /// </div>
 #[derive(Debug, Clone)]
 pub struct OpenConnectRequest {
-    pub protocol: u8,  // 9
+    pub protocol: u8,
+    // 9
     pub mtu_size: u16, // 500
 }
 

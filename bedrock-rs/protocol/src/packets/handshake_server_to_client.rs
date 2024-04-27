@@ -1,11 +1,14 @@
 use std::collections::BTreeMap;
-use std::io::{Cursor, Error};
-use bedrock_core::types::*;
+use std::io::Cursor;
+
 use bytes::BufMut;
+use jwtk::{
+    ecdsa::{EcdsaAlgorithm, EcdsaPrivateKey, EcdsaPublicKey},
+    sign,
+};
 use serde_json::Value;
-use serialize_derive::{MCDeserialize, MCSerialize};
-use jwtk::{ecdsa::{EcdsaAlgorithm, EcdsaPrivateKey, EcdsaPublicKey}, sign, verify, HeaderAndClaims, Header};
 use varint_rs::VarintWriter;
+
 use serialize::de::MCDeserialize;
 use serialize::error::{DeserilizationError, SerilizationError};
 use serialize::ser::MCSerialize;
@@ -17,10 +20,15 @@ pub struct HandshakeServerToClientPacket {
 }
 
 impl MCSerialize for HandshakeServerToClientPacket {
-    fn serialize(&self) -> Result<Vec<u8>, SerilizationError> where Self: Sized {
+    fn serialize(&self) -> Result<Vec<u8>, SerilizationError>
+    where
+        Self: Sized,
+    {
         let key = match EcdsaPrivateKey::generate(EcdsaAlgorithm::ES384) {
-            Ok(v) => { v },
-            Err(_) => { return Err(SerilizationError::GenerateKeyError) }
+            Ok(v) => v,
+            Err(_) => {
+                return Err(SerilizationError::GenerateKeyError);
+            }
         };
 
         let mut jwt = jwtk::HeaderAndClaims::new_dynamic();
@@ -32,8 +40,10 @@ impl MCSerialize for HandshakeServerToClientPacket {
         }
 
         let token = match sign(&mut jwt, &key) {
-            Ok(v) => { v }
-            Err(_) => { return Err(SerilizationError::JwtError) }
+            Ok(v) => v,
+            Err(_) => {
+                return Err(SerilizationError::JwtError);
+            }
         };
 
         println!("token:\n{}", token);
@@ -42,7 +52,9 @@ impl MCSerialize for HandshakeServerToClientPacket {
 
         match buf.write_u64_varint(token.len() as u64) {
             Ok(_) => {}
-            Err(_) => { return Err(SerilizationError::WriteVarintError) }
+            Err(_) => {
+                return Err(SerilizationError::WriteVarintError);
+            }
         }
 
         buf.put_slice(token.as_bytes());
@@ -52,7 +64,10 @@ impl MCSerialize for HandshakeServerToClientPacket {
 }
 
 impl MCDeserialize for HandshakeServerToClientPacket {
-    fn deserialize(cursor: &mut Cursor<Vec<u8>>) -> Result<Self, DeserilizationError> where Self: Sized {
+    fn deserialize(cursor: &mut Cursor<Vec<u8>>) -> Result<Self, DeserilizationError>
+    where
+        Self: Sized,
+    {
         todo!()
     }
 }

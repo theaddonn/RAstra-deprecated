@@ -9,7 +9,7 @@ edition = "2021"
 bedrock-rs = { path = "../bedrock-rs" }
 
 tokio = { version = "1.37.0", features = ["full"] }
-rak-rs = { version = "0.3.3-beta.1", default-features = false, features = ["async_tokio", "mcpe"]}
+rak-rs = { version = "0.3.3-beta.1", default-features = false, features = ["async_tokio", "mcpe"] }
 bytes = "1.6.0"
 futures-util = "0.3.30"
 rand = "0.8.5"

@@ -53,7 +53,7 @@ impl Reader<FramePacket> for FramePacket {
                 return Err(std::io::Error::new(
                     std::io::ErrorKind::InvalidData,
                     "Invalid Frame Packet ID",
-                ))
+                ));
             }
         }
         let mut frames: Vec<Frame> = Vec::new();

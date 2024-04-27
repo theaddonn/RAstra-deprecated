@@ -93,8 +93,6 @@ async fn main() {
 
     println!("{:#?}", pk);
 
-    loop {
-
-    }
+    loop {}
 }
 
