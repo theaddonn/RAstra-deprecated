@@ -25,5 +25,5 @@ pub enum RastraError {
     WrongProtocolVersionError,
     UTF8StringError,
     JWTError,
-    EcdsaKeyError
+    EcdsaKeyError,
 }

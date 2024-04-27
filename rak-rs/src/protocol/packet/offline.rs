@@ -12,16 +12,17 @@
 //! the server id, the client id, the mtu size, etc, to prepare for the connection handshake.
 use std::net::SocketAddr;
 
-use super::RakPacket;
+use binary_util::interfaces::{Reader, Writer};
+use binary_util::io::{ByteReader, ByteWriter};
+use binary_util::BinaryIo;
+
 #[cfg(feature = "mcpe")]
 pub use crate::protocol::mcpe::UnconnectedPong;
 use crate::protocol::Magic;
 use crate::protocol::RAKNET_HEADER_FRAME_OVERHEAD;
 use crate::register_packets;
 
-use binary_util::interfaces::{Reader, Writer};
-use binary_util::io::{ByteReader, ByteWriter};
-use binary_util::BinaryIo;
+use super::RakPacket;
 
 /// This is an enum of all offline packets.
 ///

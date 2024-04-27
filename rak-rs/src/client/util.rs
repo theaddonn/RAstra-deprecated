@@ -1,11 +1,14 @@
-use crate::protocol::packet::RakPacket;
-use crate::rakrs_debug;
-#[cfg(feature = "async_std")]
-use async_std::net::UdpSocket;
-use binary_util::interfaces::Writer;
 use std::sync::Arc;
+
+use binary_util::interfaces::Writer;
 #[cfg(feature = "async_tokio")]
 use tokio::net::UdpSocket;
+
+#[cfg(feature = "async_std")]
+use async_std::net::UdpSocket;
+
+use crate::protocol::packet::RakPacket;
+use crate::rakrs_debug;
 
 pub async fn send_packet(socket: &Arc<UdpSocket>, packet: RakPacket) -> bool {
     if let Ok(buf) = packet.write_to_bytes() {

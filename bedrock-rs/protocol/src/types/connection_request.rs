@@ -1,10 +1,7 @@
-use std::collections::btree_map::Values;
 use std::collections::BTreeMap;
-use std::io::{Cursor, Error, Read};
-use std::string::FromUtf8Error;
-use std::iter::Map;
+use std::io::{Cursor, Read};
 
-use bytes::{Buf, BufMut};
+use bytes::Buf;
 use serde_json::Value;
 use varint_rs::{VarintReader, VarintWriter};
 
@@ -126,7 +123,7 @@ impl MCDeserialize for ConnectionRequestType {
         // 8 = i32 len + i32 len (length of certificate_chain's len and raw_token's len)
         // can be ignored, other lengths are provided
         match cursor.read_u64_varint() {
-            Ok(_) => {},
+            Ok(_) => {}
             Err(_) => return Err(DeserilizationError::ReadVarintError),
         };
 
@@ -138,19 +135,19 @@ impl MCDeserialize for ConnectionRequestType {
         // read string data (certificate_chain)
         match cursor.read_exact(&mut certificate_chain_buf) {
             Ok(_) => {}
-            Err(_) => { return Err(DeserilizationError::NotEnoughtRemainingError) }
+            Err(_) => return Err(DeserilizationError::NotEnoughtRemainingError),
         };
 
         // transform into string
         let certificate_chain_string = match String::from_utf8(certificate_chain_buf) {
-            Ok(v) => { v }
-            Err(_) => { return Err(DeserilizationError::ReadUtf8StringError) }
+            Ok(v) => v,
+            Err(_) => return Err(DeserilizationError::ReadUtf8StringError),
         };
 
         // parse certificate chain string into json
         let certificate_chain_json = match serde_json::from_str(certificate_chain_string.as_str()) {
-            Ok(v) => { v },
-            Err(_) => { return Err(DeserilizationError::ReadJsonError) }
+            Ok(v) => v,
+            Err(_) => return Err(DeserilizationError::ReadJsonError),
         };
 
         let certificate_chain_json_jwts = match certificate_chain_json {
@@ -158,14 +155,14 @@ impl MCDeserialize for ConnectionRequestType {
                 match v.get_mut("chain") {
                     None => {
                         // the certificate chain should always be a object with just an array of jwts called "chain"
-                        return Err(DeserilizationError::ReadJsonError)
+                        return Err(DeserilizationError::ReadJsonError);
                     }
                     Some(v) => {
                         match v.take() {
-                            Value::Array(v) => { v }
+                            Value::Array(v) => v,
                             _ => {
                                 // the certificate chain should always be a object with just an array of jwts called "chain"
-                                return Err(DeserilizationError::ReadJsonError)
+                                return Err(DeserilizationError::ReadJsonError);
                             }
                         }
                     }
@@ -179,7 +176,7 @@ impl MCDeserialize for ConnectionRequestType {
 
         for jwt_json in certificate_chain_json_jwts {
             let jwt_string = match jwt_json {
-                Value::String(str) => { str },
+                Value::String(str) => str,
                 o => {
                     // the certificate chain's should always be a jwt string
                     return Err(DeserilizationError::ReadJsonError);
@@ -187,10 +184,11 @@ impl MCDeserialize for ConnectionRequestType {
             };
 
             // Decode the jwt string into a jwt
-            let jwt = match jwtk::decode_without_verify::<BTreeMap<String, Value>>(jwt_string.as_str()) {
-                Ok(v) => { v },
-                Err(_) => { return Err(DeserilizationError::ReadJwtError) }
-            };
+            let jwt =
+                match jwtk::decode_without_verify::<BTreeMap<String, Value>>(jwt_string.as_str()) {
+                    Ok(v) => v,
+                    Err(_) => return Err(DeserilizationError::ReadJwtError),
+                };
 
             certificate_chain.push(jwt.claims().extra.to_owned());
         }
@@ -203,21 +201,21 @@ impl MCDeserialize for ConnectionRequestType {
         // read string data (certificate_chain)
         match cursor.read_exact(&mut raw_token_buf) {
             Ok(_) => {}
-            Err(_) => { return Err(DeserilizationError::NotEnoughtRemainingError) }
+            Err(_) => return Err(DeserilizationError::NotEnoughtRemainingError),
         };
 
         // transform into string
         let raw_token_string = match String::from_utf8(raw_token_buf) {
-            Ok(v) => { v }
-            Err(_) => { return Err(DeserilizationError::ReadUtf8StringError) }
+            Ok(v) => v,
+            Err(_) => return Err(DeserilizationError::ReadUtf8StringError),
         };
 
-        let raw_token = match jwtk::decode_without_verify::<BTreeMap<String, Value>>(raw_token_string.as_str()) {
-            Ok(v) => { v.claims().extra.clone() },
-            Err(_) => {
-                return Err(DeserilizationError::ReadJwtError)
-            }
-        };
+        let raw_token =
+            match jwtk::decode_without_verify::<BTreeMap<String, Value>>(raw_token_string.as_str())
+            {
+                Ok(v) => v.claims().extra.clone(),
+                Err(_) => return Err(DeserilizationError::ReadJwtError),
+            };
 
         return Ok(Self {
             certificate_chain,

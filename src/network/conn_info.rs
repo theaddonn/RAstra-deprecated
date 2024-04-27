@@ -22,7 +22,7 @@ impl ConnInfo {
         }
     }
 
-    pub fn enable_compression(&mut self, compression_method: CompressionMethod){
+    pub fn enable_compression(&mut self, compression_method: CompressionMethod) {
         self.compressed = true;
         self.compression_method = Some(compression_method);
     }
@@ -32,20 +32,20 @@ impl ConnInfo {
         //    Ok(v) => { v }
         //    Err(_) => { return Err(RastraError::RecvError); }
         //};
-//
+        //
         //let mut first_12 = vec![0u8; 12];
         //first_12.copy_from_slice(&key_bytes[..12]);
-//
+        //
         //let mut nonce = [0u8; 16];
         //nonce[..12].copy_from_slice(&first_12);
         //nonce[15] = 2;
-//
-//
+        //
+        //
         //let cipher = match Ctr128LE::new_from_slices(&block.into(), &nonce.into()) {
         //    Ok(v) => { v }
         //    Err(_) => { return Err(RastraError::SendError); }
         //};
-//
+        //
         //self.encrypted = true;
         //self.stream = Some(Box::new(cipher));
 

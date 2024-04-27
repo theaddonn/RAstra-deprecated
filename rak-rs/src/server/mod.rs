@@ -4,33 +4,27 @@
 //! and dispatching them to a handler, as well as some other utilities.
 //!
 //! [`Listener`]: struct.Listener.html
-#[allow(unused)]
-/// Server events module. Handles things like updating the MOTD
-/// for certain connections. This is a notifier channel.
-pub mod event;
-
 use std::collections::HashMap;
 use std::{net::SocketAddr, sync::Arc};
 
-#[cfg(feature = "async_std")]
-use async_std::{
-    channel::{bounded, Receiver, Sender},
-    net::UdpSocket,
-    sync::Mutex,
-    task::{self},
-};
-#[cfg(feature = "async_std")]
-use futures::{select, FutureExt};
-
 use binary_util::interfaces::{Reader, Writer};
 use binary_util::ByteReader;
-
+#[cfg(feature = "async_std")]
+use futures::{select, FutureExt};
 #[cfg(feature = "async_tokio")]
 use tokio::{
     net::UdpSocket,
     select,
     sync::mpsc::channel as bounded,
     sync::mpsc::{Receiver, Sender},
+    sync::Mutex,
+    task::{self},
+};
+
+#[cfg(feature = "async_std")]
+use async_std::{
+    channel::{bounded, Receiver, Sender},
+    net::UdpSocket,
     sync::Mutex,
     task::{self},
 };
@@ -46,6 +40,11 @@ use crate::protocol::packet::RakPacket;
 use crate::protocol::Magic;
 use crate::rakrs_debug;
 use crate::util::to_address_token;
+
+#[allow(unused)]
+/// Server events module. Handles things like updating the MOTD
+/// for certain connections. This is a notifier channel.
+pub mod event;
 
 pub(crate) type Session = (ConnMeta, Sender<Vec<u8>>);
 

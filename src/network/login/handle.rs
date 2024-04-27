@@ -1,51 +1,55 @@
-use crate::{log_error, log_info, log_warning};
 use crate::error::RastraError;
 use crate::network::conn_info::ConnInfo;
 use crate::network::connection::connection::{ConnectionReadHalf, ConnectionWriteHalf};
 use crate::network::login::handshake::handle_handshake;
 use crate::network::login::login::handle_login;
 use crate::network::login::network_settings::handle_network_settings;
-use crate::network::login::packs::handle_packs;
-use crate::network::login::play_status::handle_play_status;
-use crate::network::login::start_game::handle_start_game;
 use crate::player::Player;
 use crate::server::Server;
 use crate::utils::lang::Lang;
-use crate::utils::play_status::PlayStatus;
+use crate::{log_info, log_warning};
 
 macro_rules! error_and_close {
-    ($err:expr, $connection_write_half:expr) => {
-        {
-            log_info!(format!("Error while trying to conn to player: {:?}", $err));
-            $connection_write_half.close().await;
-            Err($err)
-        }
-    };
+    ($err:expr, $connection_write_half:expr) => {{
+        log_info!(format!("Error while trying to conn to player: {:?}", $err));
+        $connection_write_half.close().await;
+        Err($err)
+    }};
 }
 
 pub async fn handle_login_process(
     mut connection_read_half: &mut ConnectionReadHalf,
     mut connection_write_half: ConnectionWriteHalf,
 ) -> Result<Player, RastraError> {
-    
     let mut conn_info = ConnInfo::new();
 
-    let protocol_version =
-        match handle_network_settings(&mut connection_read_half, &connection_write_half, &mut conn_info).await {
-            Ok(v) => v,
-            Err(e) => {
-                connection_write_half.close().await;
-                return error_and_close!(e, connection_write_half);
-            }
-        };
+    let protocol_version = match handle_network_settings(
+        &mut connection_read_half,
+        &connection_write_half,
+        &mut conn_info,
+    )
+    .await
+    {
+        Ok(v) => v,
+        Err(e) => {
+            connection_write_half.close().await;
+            return error_and_close!(e, connection_write_half);
+        }
+    };
 
     let server = Server::get_instance().await;
     let server = server.lock().await;
-    
-    if server.config.force_protocol_version { 
+
+    if server.config.force_protocol_version {
         if protocol_version != server.config.protocol_version {
-            log_warning!(format!("Client tried to connect with wrong protocol version (Server: {} | Client: {})", server.config.protocol_version, protocol_version));
-            return error_and_close!(RastraError::WrongProtocolVersionError, connection_write_half);
+            log_warning!(format!(
+                "Client tried to connect with wrong protocol version (Server: {} | Client: {})",
+                server.config.protocol_version, protocol_version
+            ));
+            return error_and_close!(
+                RastraError::WrongProtocolVersionError,
+                connection_write_half
+            );
         }
     }
 
@@ -54,7 +58,7 @@ pub async fn handle_login_process(
     }
 
     drop(server);
-    
+
     log_info!("OK AFTER NETWORK SETTINGS!");
 
     let _ = match handle_login(&mut connection_read_half, &conn_info).await {
@@ -65,16 +69,24 @@ pub async fn handle_login_process(
     };
 
     log_info!("OK AFTER LOGIN!");
-    
-    let _ = match handle_handshake(&mut connection_read_half, &connection_write_half, &mut conn_info).await {
-        Ok(_) => { log_info!("OKI"); }
+
+    let _ = match handle_handshake(
+        &mut connection_read_half,
+        &connection_write_half,
+        &mut conn_info,
+    )
+    .await
+    {
+        Ok(_) => {
+            log_info!("OKI");
+        }
         Err(e) => {
             return error_and_close!(e, connection_write_half);
         }
     };
 
     log_info!("OK AFTER HANDSHAKE!");
-    
+
     //let _ = match handle_play_status(&mut connection_read_half, &connection_write_half, &mut conn_info, PlayStatus::LoginSuccess).await {
     //    Ok(_) => {}
     //    Err(e) => {
@@ -84,7 +96,7 @@ pub async fn handle_login_process(
     //
     //log_info!("OK AFTER PLAY STATUS (PlayStatus::LoginSuccess)!");
 
-//    //let _ = match handle_packs(&connection_write_half, &mut conn_info).await {
+    //    //let _ = match handle_packs(&connection_write_half, &mut conn_info).await {
     //    Ok(_) => {}
     //    Err(e) => {
     //        return error_and_close!(e, connection_write_half);
@@ -93,7 +105,7 @@ pub async fn handle_login_process(
     //
     //log_info!("OK AFTER PACKS!");
 
-//    //let _ = match handle_start_game(&connection_write_half, &mut conn_info).await {
+    //    //let _ = match handle_start_game(&connection_write_half, &mut conn_info).await {
     //    Ok(_) => {}
     //    Err(e) => {
     //        return error_and_close!(e, connection_write_half);
@@ -125,4 +137,3 @@ pub async fn handle_login_process(
 
     Ok(player)
 }
-

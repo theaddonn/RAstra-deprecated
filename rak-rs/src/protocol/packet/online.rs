@@ -14,12 +14,13 @@
 //! to initialize the connection within raknet, and completing the connection handshake.
 use std::net::SocketAddr;
 
-use super::RakPacket;
-use crate::register_packets;
-
 use binary_util::interfaces::{Reader, Writer};
 use binary_util::io::{ByteReader, ByteWriter};
 use binary_util::BinaryIo;
+
+use crate::register_packets;
+
+use super::RakPacket;
 
 /// An enum of all Online packets.
 ///

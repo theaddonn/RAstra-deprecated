@@ -6,8 +6,8 @@ pub trait GamepacketServer {
 
 pub trait GamepacketClient {
     fn deserialize(data: Vec<u8>) -> Result<Self, RastraError>
-        where
-            Self: Sized;
+    where
+        Self: Sized;
 }
 
 pub trait GamepacketBoth: GamepacketServer + GamepacketClient {}

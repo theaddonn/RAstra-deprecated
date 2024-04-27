@@ -34,31 +34,16 @@
 //!     client.close().await;
 //! }
 //! ```
-pub mod discovery;
-pub mod handshake;
-pub(crate) mod util;
-
 use std::{
     net::SocketAddr,
     sync::{atomic::AtomicU64, Arc},
     time::Duration,
 };
 
-#[cfg(feature = "async_std")]
-use async_std::{
-    channel::{bounded, Receiver, RecvError, Sender},
-    future::timeout,
-    net::UdpSocket,
-    sync::{Mutex, RwLock},
-    task::{self, sleep, JoinHandle},
-};
-
-#[cfg(feature = "async_std")]
-use futures::{select, FutureExt};
-
 use binary_util::interfaces::{Reader, Writer};
 use binary_util::io::ByteReader;
-
+#[cfg(feature = "async_std")]
+use futures::{select, FutureExt};
 #[cfg(feature = "async_tokio")]
 use tokio::{
     net::UdpSocket,
@@ -71,9 +56,21 @@ use tokio::{
     time::{sleep, timeout},
 };
 
+#[cfg(feature = "async_std")]
+use async_std::{
+    channel::{bounded, Receiver, RecvError, Sender},
+    future::timeout,
+    net::UdpSocket,
+    sync::{Mutex, RwLock},
+    task::{self, sleep, JoinHandle},
+};
+
 #[cfg(feature = "async_tokio")]
 use crate::connection::RecvError;
-
+#[cfg(feature = "mcpe")]
+use crate::protocol::mcpe::UnconnectedPong;
+#[cfg(not(feature = "mcpe"))]
+use crate::protocol::packet::offline::UnconnectedPong;
 use crate::{
     connection::{
         queue::{RecvQueue, SendQueue},
@@ -96,14 +93,13 @@ use crate::{
     server::{current_epoch, PossiblySocketAddr},
 };
 
-#[cfg(feature = "mcpe")]
-use crate::protocol::mcpe::UnconnectedPong;
-#[cfg(not(feature = "mcpe"))]
-use crate::protocol::packet::offline::UnconnectedPong;
+use self::handshake::{ClientHandshake, HandshakeStatus};
+
+pub mod discovery;
+pub mod handshake;
+pub(crate) mod util;
 
 pub const DEFAULT_MTU: u16 = 1400;
-
-use self::handshake::{ClientHandshake, HandshakeStatus};
 
 /// This is the client implementation of RakNet.
 /// This struct includes a few designated methods for sending and receiving packets.

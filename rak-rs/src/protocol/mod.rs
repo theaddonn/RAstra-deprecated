@@ -23,6 +23,8 @@
 //!     }
 //! };
 //! ```
+pub use magic::*;
+
 /// This is an internal module that contains the logic to implement the Ack system within
 /// RakNet.
 pub(crate) mod ack;
@@ -45,8 +47,6 @@ pub(crate) mod magic;
 pub mod mcpe;
 pub mod packet;
 pub mod reliability;
-
-pub use magic::*;
 
 /// The maximum amount of fragments that can be sent within a single frame.
 /// This constant is used to prevent a client from sending too many fragments,

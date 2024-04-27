@@ -1,8 +1,8 @@
-use crate::{log_info, log_warning};
 use crate::network::gamepacket::GamepacketServer;
 use crate::network::packet::packet_network_settings::PacketNetworkSettings;
 use crate::network::packet::packet_request_network_settings::PacketRequestNetworkSettings;
 use crate::server::Server;
+use crate::{log_info, log_warning};
 
 pub async fn handle_request_network_settings(_packet: PacketRequestNetworkSettings, peer_id: u64) {
     let server = Server::get_instance().await;

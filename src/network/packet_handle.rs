@@ -1,11 +1,11 @@
 use bytes::Buf;
 use varint_rs::VarintReader;
 
-use crate::{log_info, log_warning};
 use crate::network::gamepacket::GamepacketClient;
 use crate::network::packet::packet_request_network_settings::PacketRequestNetworkSettings;
 use crate::network::packet_handlers::packet_handler_request_network_settings::handle_request_network_settings;
 use crate::network::packet_info::GamePacket;
+use crate::{log_info, log_warning};
 
 pub async fn handle_packet(packet: Vec<u8>, peer_id: u64) {
     match packet.reader().read_u64_varint() {

@@ -1,6 +1,19 @@
+#[cfg(feature = "async_tokio")]
+use std::future::Future;
 use std::sync::Arc;
 use std::sync::Mutex;
+#[cfg(feature = "async_tokio")]
+use std::task::{Context, Poll, Waker};
 use std::time::Duration;
+
+use binary_util::interfaces::Reader;
+use binary_util::io::ByteReader;
+#[cfg(feature = "async_tokio")]
+use tokio::{
+    net::UdpSocket,
+    task::{self},
+    time::timeout,
+};
 
 #[cfg(feature = "async_std")]
 use async_std::{
@@ -8,20 +21,6 @@ use async_std::{
     future::Future,
     net::UdpSocket,
     task::{self, Context, Poll, Waker},
-};
-
-use binary_util::interfaces::Reader;
-use binary_util::io::ByteReader;
-
-#[cfg(feature = "async_tokio")]
-use std::future::Future;
-#[cfg(feature = "async_tokio")]
-use std::task::{Context, Poll, Waker};
-#[cfg(feature = "async_tokio")]
-use tokio::{
-    net::UdpSocket,
-    task::{self},
-    time::timeout,
 };
 
 use crate::match_ids;

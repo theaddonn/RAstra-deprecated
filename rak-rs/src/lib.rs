@@ -98,6 +98,9 @@
 //!     }
 //! }
 //! ```
+pub use protocol::mcpe::{self, motd::Motd};
+pub use server::Listener;
+
 /// A client implementation of RakNet, allowing you to connect to a RakNet server.
 pub mod client;
 /// The connection implementation of RakNet, allowing you to send and receive packets.
@@ -113,9 +116,6 @@ pub mod protocol;
 pub mod server;
 /// Utilties for RakNet, like epoch time.
 pub mod util;
-
-pub use protocol::mcpe::{self, motd::Motd};
-pub use server::Listener;
 
 /// An internal module for notifying the connection of state updates.
 pub(crate) mod notify;

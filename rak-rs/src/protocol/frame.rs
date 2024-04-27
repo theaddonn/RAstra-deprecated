@@ -3,6 +3,10 @@ use binary_util::{
     BinaryIo,
 };
 
+use crate::rakrs_debug;
+
+use super::reliability::Reliability;
+
 /// The information for the given fragment.
 /// This is used to determine how to reassemble the frame.
 #[derive(Debug, Clone, BinaryIo)]
@@ -18,10 +22,6 @@ impl FragmentMeta {
         Self { size, id, index }
     }
 }
-
-use crate::rakrs_debug;
-
-use super::reliability::Reliability;
 
 /// Frames are a encapsulation of a packet or packets.
 /// They are used to send packets to the connection in a reliable way.

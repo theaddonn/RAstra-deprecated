@@ -50,7 +50,7 @@ impl Config {
         let data = tokio::fs::read(Path::new("rastra.toml")).await.unwrap();
 
         let config: Self = match toml::from_str(&*String::from_utf8_lossy(&*data)) {
-            Ok(v) => { v },
+            Ok(v) => v,
             Err(e) => {
                 log_error!(format!("Couldn't load rastra.toml: {}", e))
             }

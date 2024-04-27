@@ -6,7 +6,7 @@
 // u8
 // use normal u8
 
-use std::fmt::{Debug, Display, Formatter};
+use std::fmt::{Debug, Display};
 
 // i16
 #[derive(Debug, Copy, Clone, Eq, PartialEq)]

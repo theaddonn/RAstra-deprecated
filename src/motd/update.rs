@@ -1,5 +1,5 @@
-use rak_rs::{Listener, Motd};
 use rak_rs::mcpe::motd::Gamemode;
+use rak_rs::{Listener, Motd};
 use rand::random;
 
 use crate::server::Server;

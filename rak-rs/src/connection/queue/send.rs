@@ -2,12 +2,12 @@ use std::collections::HashMap;
 use std::net::SocketAddr;
 use std::sync::Arc;
 
-#[cfg(feature = "async_std")]
-use async_std::net::UdpSocket;
-
 use binary_util::interfaces::Writer;
 #[cfg(feature = "async_tokio")]
 use tokio::net::UdpSocket;
+
+#[cfg(feature = "async_std")]
+use async_std::net::UdpSocket;
 
 use crate::protocol::ack::{Ack, Ackable, Record, SingleRecord};
 use crate::protocol::frame::{Frame, FramePacket};

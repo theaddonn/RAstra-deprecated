@@ -49,18 +49,19 @@ async fn main() {
     ];
 
     let mut conn_info = ConnInfo::new();
-    
+
     conn_info.enable_compression(CompressionMethod::Flate);
-    
-    let data = decode(compressed_server_to_client_handshake_packet, &conn_info).await.unwrap();
-    
+
+    let data = decode(compressed_server_to_client_handshake_packet, &conn_info)
+        .await
+        .unwrap();
+
     let mut reader = PacketReader::new_game_packet_reader(data[0].clone());
-    
+
     reader.read_u64_varint().unwrap();
-    
+
     //println!("{}", reader.read_string_lossy().unwrap());
-    
-    
+
     check_all().await;
 
     Server::start().await;

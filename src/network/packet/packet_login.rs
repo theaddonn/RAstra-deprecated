@@ -11,8 +11,8 @@ struct PacketLogin {
 
 impl GamepacketClient for PacketLogin {
     fn deserialize(data: Vec<u8>) -> Result<Self, RastraError>
-        where
-            Self: Sized,
+    where
+        Self: Sized,
     {
         log_info!("PacketLogin", format!("{data:?}"));
         Err(RastraError::DecompressionError)

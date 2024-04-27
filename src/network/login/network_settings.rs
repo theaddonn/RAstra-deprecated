@@ -8,9 +8,9 @@ use crate::network::utils::handler::{decode, encode};
 
 pub async fn handle_network_settings(
     mut connection_read_half: &mut ConnectionReadHalf,
-    connection_write_half: &ConnectionWriteHalf, conn_info: &mut ConnInfo
+    connection_write_half: &ConnectionWriteHalf,
+    conn_info: &mut ConnInfo,
 ) -> Result<u32, RastraError> {
-
     let data = match connection_read_half.recv().await {
         Ok(v) => v,
         Err(_) => return Err(RastraError::RecvError),

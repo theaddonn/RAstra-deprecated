@@ -43,10 +43,10 @@ impl PacketNetworkSettings {
 
         // If compression is disabled, set compression_threshold to 0 to disable packet compression
         let compression_threshold = match config.compression_enabled {
-            true => { config.compression_threshold },
-            false => { 0 }
+            true => config.compression_threshold,
+            false => 0,
         };
-        
+
         Self {
             compression_threshold,
             compression_method: config.compression_method.to_int(),

@@ -1,29 +1,28 @@
 use cell::Cell;
 use std::clone::Clone;
 use std::collections::HashMap;
-use std::{cell, env};
 use std::net::{IpAddr, SocketAddr};
 use std::sync::Arc;
+use std::{cell, env};
+
 use async_once::AsyncOnce;
-use rak_rs::{Listener, rakrs_debug};
+use lazy_static::lazy_static;
 use rak_rs::error::server::ServerError;
+use rak_rs::{rakrs_debug, Listener};
 use rand::random;
 use tokio::sync::{Mutex, MutexGuard};
 
-use crate::{log_error, log_info, tick};
 use crate::cli::cli::Cli;
 use crate::config::config::Config;
 use crate::error::RastraError;
-use crate::network::{listener};
+use crate::network::listener;
 use crate::player::Player;
-
-use lazy_static::lazy_static;
+use crate::{log_error, log_info, tick};
 
 lazy_static! {
     static ref SERVER_INSTANCE: AsyncOnce<Arc<Mutex<Server>>> =
         AsyncOnce::new(async { Arc::new(Mutex::new(Server::init().await)) });
 }
-
 
 /// The main Server struct of RAstra
 ///
@@ -114,7 +113,7 @@ impl Server {
             IpAddr::from(server_config.ip),
             server_config.port_v4,
         ))
-            .await
+        .await
         {
             Ok(v) => return v,
             Err(e) => match e {

@@ -1,7 +1,7 @@
 use std::sync::Arc;
 
-use rak_rs::connection::{Connection, RecvError};
 use rak_rs::connection::queue::SendQueueError;
+use rak_rs::connection::{Connection, RecvError};
 use tokio::sync::mpsc::Receiver;
 use tokio::sync::Mutex;
 

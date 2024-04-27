@@ -1,10 +1,10 @@
 use input_macro::input;
 use tokio::sync::mpsc::Sender;
 
-use crate::{log_info, log_warning};
 use crate::cli::command::registry::register::register_commands;
 use crate::cli::command::registry::registry::CliCommandRegistry;
 use crate::server::Server;
+use crate::{log_info, log_warning};
 
 pub struct Cli {
     pub commands_registry: CliCommandRegistry,

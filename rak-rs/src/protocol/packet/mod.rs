@@ -9,13 +9,13 @@
 // /// This is used by the connection struct to handle packets.
 // pub(crate) mod handler;
 
-pub mod offline;
-pub mod online;
-
 use binary_util::interfaces::{Reader, Writer};
 
 use self::offline::OfflinePacket;
 use self::online::OnlinePacket;
+
+pub mod offline;
+pub mod online;
 
 /// A wrapper or helper for both online and offline packets.
 /// This allows for a single type to be read with `Reader` and written with `Writer`,

@@ -1,11 +1,8 @@
-use std::io::{Cursor, Error, Read};
-use std::string::FromUtf8Error;
+use std::io::{Cursor, Read};
 
 use bytes::Buf;
 use bytes::BufMut;
 use varint_rs::{VarintReader, VarintWriter};
-
-use bedrock_core::types::i64be;
 
 use crate::de::MCDeserialize;
 use crate::error::{DeserilizationError, SerilizationError};

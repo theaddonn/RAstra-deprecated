@@ -51,13 +51,22 @@ pub async fn decode(mut data: Vec<u8>, conn_info: &ConnInfo) -> Result<Vec<Vec<u
     Ok(buf)
 }
 
-pub async fn encode(packets: Vec<Vec<u8>>, conn_info: &mut ConnInfo) -> Result<Vec<u8>, RastraError> {
+pub async fn encode(
+    packets: Vec<Vec<u8>>,
+    conn_info: &mut ConnInfo,
+) -> Result<Vec<u8>, RastraError> {
     let mut buf = vec![];
 
     buf.put_u8(RAKNET_GAMEPACKET_ID);
 
     if conn_info.compressed {
-        buf.put_i8(conn_info.compression_method.ok_or(RastraError::CompressionMethodUnknown).unwrap().to_int() as i8);
+        buf.put_i8(
+            conn_info
+                .compression_method
+                .ok_or(RastraError::CompressionMethodUnknown)
+                .unwrap()
+                .to_int() as i8,
+        );
     }
 
     let data = batch_packetbatch(packets);

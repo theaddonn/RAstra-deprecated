@@ -1,9 +1,3 @@
-pub(crate) mod recv;
-pub(crate) mod send;
-
-pub use self::recv::*;
-pub use self::send::*;
-
 use std::collections::BTreeMap;
 use std::collections::HashMap;
 
@@ -12,6 +6,12 @@ use crate::protocol::frame::Frame;
 use crate::protocol::reliability::Reliability;
 use crate::protocol::RAKNET_HEADER_FRAME_OVERHEAD;
 use crate::server::current_epoch;
+
+pub use self::recv::*;
+pub use self::send::*;
+
+pub(crate) mod recv;
+pub(crate) mod send;
 
 #[derive(Debug, Clone)]
 pub enum NetQueueError<E> {

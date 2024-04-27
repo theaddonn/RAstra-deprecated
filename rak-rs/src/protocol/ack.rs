@@ -1,6 +1,3 @@
-pub const ACK: u8 = 0xc0;
-pub const NACK: u8 = 0xa0;
-
 use std::ops::Range;
 
 use binary_util::{
@@ -8,6 +5,9 @@ use binary_util::{
     types::u24,
     BinaryIo,
 };
+
+pub const ACK: u8 = 0xc0;
+pub const NACK: u8 = 0xa0;
 
 pub(crate) trait Ackable {
     type NackItem;

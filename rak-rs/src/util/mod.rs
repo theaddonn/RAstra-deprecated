@@ -1,10 +1,13 @@
 #![allow(deprecated)]
-#[cfg(feature = "async_std")]
-use async_std::task::sleep as async_sleep;
+
 use std::net::{SocketAddr, ToSocketAddrs};
 use std::{collections::HashMap, time::SystemTime};
+
 #[cfg(feature = "async_tokio")]
 use tokio::time::sleep as async_sleep;
+
+#[cfg(feature = "async_std")]
+use async_std::task::sleep as async_sleep;
 
 pub(crate) mod debug;
 

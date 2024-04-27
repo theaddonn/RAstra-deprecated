@@ -42,11 +42,6 @@
 //! [`controller`]: crate::connection::controller
 //! [`queue`]: crate::connection::queue
 //! [`state`]: crate::connection::state
-pub mod controller;
-/// Necessary queues for the connection.
-pub mod queue;
-pub mod state;
-
 use std::{
     net::{IpAddr, Ipv4Addr, SocketAddr},
     sync::{atomic::AtomicU64, Arc},
@@ -54,14 +49,6 @@ use std::{
 };
 
 use binary_util::interfaces::{Reader, Writer};
-
-#[cfg(feature = "async_std")]
-use async_std::{
-    channel::{bounded, Receiver, RecvError, Sender},
-    net::UdpSocket,
-    sync::{Mutex, RwLock},
-    task::{self, sleep, JoinHandle},
-};
 #[cfg(feature = "async_std")]
 use futures::{select, FutureExt};
 #[cfg(feature = "async_tokio")]
@@ -75,11 +62,14 @@ use tokio::{
     task::{self, JoinHandle},
     time::sleep,
 };
-#[cfg(feature = "async_tokio")]
-pub enum RecvError {
-    Closed,
-    Timeout,
-}
+
+#[cfg(feature = "async_std")]
+use async_std::{
+    channel::{bounded, Receiver, RecvError, Sender},
+    net::UdpSocket,
+    sync::{Mutex, RwLock},
+    task::{self, sleep, JoinHandle},
+};
 
 use crate::{
     notify::Notify,
@@ -101,6 +91,18 @@ use self::{
     queue::{RecvQueue, SendQueue, SendQueueError},
     state::ConnectionState,
 };
+
+pub mod controller;
+/// Necessary queues for the connection.
+pub mod queue;
+pub mod state;
+
+#[cfg(feature = "async_tokio")]
+pub enum RecvError {
+    Closed,
+    Timeout,
+}
+
 pub(crate) type ConnNetChan = Arc<Mutex<Receiver<Vec<u8>>>>;
 
 #[derive(Debug, Clone, Copy)]

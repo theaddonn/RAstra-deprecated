@@ -1,3 +1,28 @@
+#[cfg(feature = "async_tokio")]
+use std::future::Future;
+use std::sync::Arc;
+use std::sync::Mutex;
+#[cfg(feature = "async_tokio")]
+use std::task::{Context, Poll, Waker};
+use std::time::Duration;
+
+use binary_util::interfaces::Reader;
+use binary_util::io::ByteReader;
+#[cfg(feature = "async_tokio")]
+use tokio::{
+    net::UdpSocket,
+    task::{self},
+    time::timeout,
+};
+
+#[cfg(feature = "async_std")]
+use async_std::{
+    future::timeout,
+    future::Future,
+    net::UdpSocket,
+    task::{self, Context, Poll, Waker},
+};
+
 use crate::client::discovery;
 use crate::client::discovery::DiscoveryStatus;
 use crate::client::discovery::MtuDiscovery;
@@ -12,28 +37,6 @@ use crate::protocol::reliability::Reliability;
 use crate::protocol::Magic;
 use crate::rakrs_debug;
 use crate::server::current_epoch;
-#[cfg(feature = "async_std")]
-use async_std::{
-    future::timeout,
-    future::Future,
-    net::UdpSocket,
-    task::{self, Context, Poll, Waker},
-};
-use binary_util::interfaces::Reader;
-use binary_util::io::ByteReader;
-#[cfg(feature = "async_tokio")]
-use std::future::Future;
-use std::sync::Arc;
-use std::sync::Mutex;
-#[cfg(feature = "async_tokio")]
-use std::task::{Context, Poll, Waker};
-use std::time::Duration;
-#[cfg(feature = "async_tokio")]
-use tokio::{
-    net::UdpSocket,
-    task::{self},
-    time::timeout,
-};
 
 #[macro_export]
 macro_rules! match_ids {
