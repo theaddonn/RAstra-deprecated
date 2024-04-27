@@ -1,6 +1,8 @@
 #[derive(Copy, Clone, Debug)]
 pub enum SerilizationError {
     WriteVarintError,
+    GenerateKeyError,
+    JwtError,
 }
 
 #[derive(Copy, Clone, Debug)]
