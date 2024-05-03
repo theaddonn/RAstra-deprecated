@@ -1,14 +1,14 @@
 #[derive(Copy, Clone, Debug)]
 pub enum SerilizationError {
-    WriteVarintError,
+    WriteIOError,
     GenerateKeyError,
     JwtError,
 }
 
 #[derive(Copy, Clone, Debug)]
 pub enum DeserilizationError {
+    ReadIOError,
     NotEnoughtRemainingError,
-    ReadVarintError,
     ReadUtf8StringError,
     ReadJsonError,
     ReadJwtError,
