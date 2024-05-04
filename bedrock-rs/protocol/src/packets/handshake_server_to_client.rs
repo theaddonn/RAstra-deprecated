@@ -13,6 +13,19 @@ use serialize::proto::ser::MCProtoSerialize;
 pub struct HandshakeServerToClientPacket {
     pub handshake_webtoken: BTreeMap<String, Value>,
 }
+
+impl MCProtoSerialize for HandshakeServerToClientPacket {
+    fn proto_serialize(&self, buf: &mut Vec<u8>) -> Result<(), SerilizationError> where Self: Sized {
+        Ok(())
+    }
+}
+
+impl MCProtoDeserialize for HandshakeServerToClientPacket {
+    fn proto_deserialize(cursor: &mut Cursor<Vec<u8>>) -> Result<Self, DeserilizationError> where Self: Sized {
+        Err(DeserilizationError::ReadIOError)
+    }
+}
+
 //
 // impl MCProtoSerialize for HandshakeServerToClientPacket {
 //     fn proto_serialize(&self) -> Result<Vec<u8>, SerilizationError>
