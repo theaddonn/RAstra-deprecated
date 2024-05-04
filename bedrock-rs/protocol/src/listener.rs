@@ -29,9 +29,19 @@ impl Listener {
 
     pub fn accept(&mut self) {}
 
-    fn get_options(&self) -> &ListenerConfig {
+    fn get_config(&self) -> &ListenerConfig {
         &self.config
     }
+
+    fn get_config_mut(&mut self) -> &mut ListenerConfig {
+        &mut self.config
+    }
+
+    fn set_config(&mut self, config: ListenerConfig) {
+        self.config = config;
+    }
+
+    fn update_pongdata(){}
 }
 
 #[derive(Debug, Eq, PartialEq)]
