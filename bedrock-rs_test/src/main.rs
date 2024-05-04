@@ -3,7 +3,7 @@ use std::io::{Cursor, Read};
 use bedrock_rs::protocol::de::MCProtoDeserialize;
 use bedrock_rs::protocol::ser::MCProtoSerialize;
 use bedrock_rs::core::types::u16le;
-use bedrock_rs::protocol::info::GamePacket;
+use bedrock_rs::protocol::info::GamePacketID;
 use bedrock_rs::protocol::packets::login::LoginPacket;
 use bedrock_rs::protocol::packets::network_settings::NetworkSettingsPacket;
 use bedrock_rs::protocol::packets::network_settings_request::NetworkSettingsRequestPacket;
@@ -65,7 +65,7 @@ async fn main() {
 
     let mut nspk_buf = vec![];
 
-    nspk_buf.write_u64_varint(GamePacket::NetworkSettings as u64).unwrap();
+    nspk_buf.write_u64_varint(GamePacketID::NetworkSettingsID as u64).unwrap();
     nspk.proto_serialize(&mut nspk_buf).unwrap();
 
     let mut buf = vec![];
