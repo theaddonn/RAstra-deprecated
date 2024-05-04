@@ -1,5 +1,5 @@
-use byteorder::{BigEndian, ByteOrder, LittleEndian, ReadBytesExt, WriteBytesExt};
-use std::io::{Cursor, Error, Read, Write};
+use byteorder::{BigEndian, LittleEndian, ReadBytesExt, WriteBytesExt};
+use std::io::{Cursor, Read, Write};
 
 use varint_rs::{VarintReader, VarintWriter};
 
@@ -698,5 +698,52 @@ impl<T: MCProtoSerialize> MCProtoSerialize for Vec<T> {
         }
 
         Ok(())
+    }
+}
+
+// option
+
+impl<T: MCProtoSerialize> MCProtoSerialize for Option<T>  {
+    fn proto_serialize(&self, buf: &mut Vec<u8>) -> Result<(), SerilizationError> where Self: Sized {
+        match self {
+            None => {
+                match false.proto_serialize(buf) {
+                    Ok(_) => { Ok(()) }
+                    Err(e) => { Err(e) }
+                }
+            }
+            Some(v) => {
+                match true.proto_serialize(buf) {
+                    Ok(_) => { Ok(()) }
+                    Err(e) => { Err(e) }
+                };
+
+                match v.proto_serialize(buf) {
+                    Ok(_) => { Ok(()) }
+                    Err(e) => { Err(e) }
+                }
+            }
+        }
+    }
+}
+
+impl<T: MCProtoDeserialize> MCProtoDeserialize for Option<T>  {
+    fn proto_deserialize(cursor: &mut Cursor<Vec<u8>>) -> Result<Self, DeserilizationError> where Self: Sized {
+        match bool::proto_deserialize(cursor) {
+            Ok(v) => {
+                match v {
+                    false => {
+                        Ok(Option::None)
+                    }
+                    true => {
+                        match T::proto_deserialize(cursor) {
+                            Ok(v) => { Ok(Option::Some(v)) }
+                            Err(e) => { Err(e) }
+                        }
+                    }
+                }
+            }
+            Err(e) => { Err(e) }
+        }
     }
 }
