@@ -1,7 +1,7 @@
 use bedrock_core::types::*;
-use serialize_derive::{MCDeserialize, MCSerialize};
+use serialize_derive::{MCProtoSerialize, MCProtoDeserialize};
 
-#[derive(Debug, Copy, Clone, MCSerialize, MCDeserialize)]
+#[derive(Debug, Copy, Clone, MCProtoSerialize, MCProtoDeserialize)]
 pub struct NetworkSettingsPacket {
     /// Determines the smallest size of raw network payload to compress.
     /// - 0 is disable compression

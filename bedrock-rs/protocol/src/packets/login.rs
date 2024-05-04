@@ -1,12 +1,12 @@
 use bedrock_core::types::*;
-use serialize_derive::{MCDeserialize, MCSerialize};
+use serialize_derive::{MCProtoSerialize, MCProtoDeserialize};
 
-use serialize::de::MCDeserialize;
-use serialize::ser::MCSerialize;
+use serialize::proto::de::MCProtoDeserialize;
+use serialize::proto::ser::MCProtoSerialize;
 
 use crate::types::connection_request::ConnectionRequestType;
 
-#[derive(Debug, MCSerialize, MCDeserialize)]
+#[derive(Debug, MCProtoSerialize, MCProtoDeserialize)]
 pub struct LoginPacket {
     pub client_network_version: i32be,
     pub connection_request: ConnectionRequestType,
