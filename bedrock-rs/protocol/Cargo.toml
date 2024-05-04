@@ -10,7 +10,10 @@ bedrock_core = { path = "../bedrock_core" }
 serialize = { path = "../serialize" }
 serialize_derive = { path = "../serialize_derive" }
 
-bytes = "1.6.0"
-varint-rs = "2.2.0"
-jwtk = { version = "0.3.0", default-features = false, features = ["tokio"] }
-serde_json = "1.0.116"
+byteorder = "1.5"
+varint-rs = "2.2"
+jsonwebtoken = "9.3"
+ring = { version = "0.17" }
+serde_json = "1.0"
+rak-rs = { version = "0.3", default-features = false, features = ["tokio", "mcpe"] }
+tokio = { version = "1", features = ["full"] }
