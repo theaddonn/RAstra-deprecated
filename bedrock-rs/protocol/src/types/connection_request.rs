@@ -1,7 +1,7 @@
 use std::collections::BTreeMap;
 use std::io::{Cursor, Read};
-
-use bytes::Buf;
+use byteorder::LittleEndian;
+use byteorder::ReadBytesExt;
 use serde_json::Value;
 use varint_rs::VarintReader;
 
@@ -124,7 +124,10 @@ impl MCProtoDeserialize for ConnectionRequestType {
         };
 
         // read length of certificate_chain vec
-        let certificate_chain_len = cursor.get_i32_le();
+        let certificate_chain_len = match cursor.read_i32::<LittleEndian>() {
+            Ok(l) => { l }
+            Err(_) => { return Err(DeserilizationError::ReadIOError) }
+        };
 
         let mut certificate_chain_buf = vec![0; certificate_chain_len as usize];
 
@@ -190,7 +193,10 @@ impl MCProtoDeserialize for ConnectionRequestType {
         }
 
         // read length of certificate_chain vec
-        let raw_token_len = cursor.get_i32_le();
+        let raw_token_len = match cursor.read_i32::<LittleEndian>() {
+            Ok(l) => { l }
+            Err(_) => { return Err(DeserilizationError::ReadIOError) }
+        };
 
         let mut raw_token_buf = vec![0; raw_token_len as usize];
 

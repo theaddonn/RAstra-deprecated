@@ -1,7 +1,6 @@
 use std::collections::BTreeMap;
 use std::io::Cursor;
 
-use bytes::BufMut;
 use jsonwebtoken::decode;
 use serde_json::Value;
 use varint_rs::VarintWriter;
