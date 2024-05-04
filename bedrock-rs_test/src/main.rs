@@ -1,9 +1,9 @@
-use std::io::Cursor;
+use std::io::{Cursor, Read};
 
-use bedrock_rs::core::de::MCDeserialize;
-use bedrock_rs::core::ser::MCSerialize;
+use bedrock_rs::protocol::de::MCProtoDeserialize;
+use bedrock_rs::protocol::ser::MCProtoSerialize;
 use bedrock_rs::core::types::u16le;
-use bedrock_rs::protocol::info::GamePacketType;
+use bedrock_rs::protocol::info::GamePacket;
 use bedrock_rs::protocol::packets::login::LoginPacket;
 use bedrock_rs::protocol::packets::network_settings::NetworkSettingsPacket;
 use bedrock_rs::protocol::packets::network_settings_request::NetworkSettingsRequestPacket;
@@ -20,13 +20,13 @@ async fn main() {
 
     listener.motd = Motd {
         edition: String::from("MCPE"),
-        name: String::from("Bedrock Test"),
-        sub_name: String::from("Rastra"),
+        name: String::from(format!("Bedrock Test {}", String::from_utf8(vec![0xc2, 0xa7, 0x41, 0xc2, 0xa7, 0x4d, 0xc2, 0xa7, 0x45, 0xc2, 0xa7, 0x54, 0xc2, 0xa7, 0x48, 0xc2, 0xa7, 0x59, 0xc2, 0xa7, 0x53, 0xc2, 0xa7, 0x54]).unwrap())),
+        sub_name: String::from("RAstra - v1.20.81 Mommy Edition"),
         protocol: bedrock_rs::protocol::info::PROTOCOL_VERSION as u16,
-        version: String::from("1.20.80"),
+        version: String::from(""),
         player_count: 1,
         player_max: 10,
-        gamemode: Gamemode::Survival,
+        gamemode: Gamemode::Creative,
         server_guid: rand::random(),
         port: Some(String::from("19132")),
         ipv6_port: Some(String::from("19133")),
@@ -39,7 +39,6 @@ async fn main() {
 
     listener.start().await.unwrap();
 
-
     println!("started!");
 
     let mut conn = listener.accept().await.unwrap();
@@ -50,7 +49,7 @@ async fn main() {
     data.read_u64_varint().unwrap();
     data.read_u64_varint().unwrap();
 
-    let pk = NetworkSettingsRequestPacket::deserialize(
+    let pk = NetworkSettingsRequestPacket::proto_deserialize(
         &mut data
     ).unwrap();
 
@@ -66,8 +65,8 @@ async fn main() {
 
     let mut nspk_buf = vec![];
 
-    nspk_buf.write_u64_varint(GamePacketType::NetworkSettings as u64).unwrap();
-    nspk_buf.put_slice(&*nspk.serialize().unwrap());
+    nspk_buf.write_u64_varint(GamePacket::NetworkSettings as u64).unwrap();
+    nspk.proto_serialize(&mut nspk_buf).unwrap();
 
     let mut buf = vec![];
     buf.put_u8(bedrock_rs::protocol::info::RAKNET_GAME_PACKET_ID);
@@ -87,11 +86,13 @@ async fn main() {
     data.read_u64_varint().unwrap();
     data.read_u64_varint().unwrap();
 
-    let pk = LoginPacket::deserialize(
+    let pk = LoginPacket::proto_deserialize(
         &mut data
     ).unwrap();
 
     println!("{:#?}", pk);
+
+
 
     loop {}
 }
