@@ -5,9 +5,9 @@ use bytes::Buf;
 use serde_json::Value;
 use varint_rs::VarintReader;
 
-use serialize::de::MCDeserialize;
-use serialize::error::{DeserilizationError, SerilizationError};
-use serialize::ser::MCSerialize;
+use serialize::proto::de::MCProtoDeserialize;
+use serialize::proto::error::{DeserilizationError, SerilizationError};
+use serialize::proto::ser::MCProtoSerialize;
 
 #[derive(Debug)]
 pub struct ConnectionRequestType {
@@ -80,14 +80,8 @@ pub struct ConnectionRequestType {
 }
 
 // TODO: Add MCSerialize
-impl MCSerialize for ConnectionRequestType {
-    fn serialize(&self) -> Result<Vec<u8>, SerilizationError>
-    where
-        Self: Sized,
-    {
-        todo!();
-
-        let mut buf = vec![];
+impl MCProtoSerialize for ConnectionRequestType {
+    fn proto_serialize(&self, buf: &mut Vec<u8>) -> Result<(), SerilizationError> where Self: Sized {
 
         // Write entire length
         // 8 = i32 + i32 for length of both
@@ -108,13 +102,13 @@ impl MCSerialize for ConnectionRequestType {
         // write strings (raw_token)
         //buf.put_slice(&self.raw_token.as_bytes());
 
-        Ok(buf)
+        Ok(())
     }
 }
 
 // TODO: Add microsoft auth
-impl MCDeserialize for ConnectionRequestType {
-    fn deserialize(cursor: &mut Cursor<Vec<u8>>) -> Result<Self, DeserilizationError>
+impl MCProtoDeserialize for ConnectionRequestType {
+    fn proto_deserialize(cursor: &mut Cursor<Vec<u8>>) -> Result<Self, DeserilizationError>
     where
         Self: Sized,
     {
@@ -126,7 +120,7 @@ impl MCDeserialize for ConnectionRequestType {
         // can be ignored, other lengths are provided
         match cursor.read_u64_varint() {
             Ok(_) => {}
-            Err(_) => return Err(DeserilizationError::ReadVarintError),
+            Err(_) => return Err(DeserilizationError::ReadIOError),
         };
 
         // read length of certificate_chain vec
@@ -186,13 +180,13 @@ impl MCDeserialize for ConnectionRequestType {
             };
 
             // Decode the jwt string into a jwt
-            let jwt =
-                match jwtk::decode_without_verify::<BTreeMap<String, Value>>(jwt_string.as_str()) {
-                    Ok(v) => v,
-                    Err(_) => return Err(DeserilizationError::ReadJwtError),
-                };
-
-            certificate_chain.push(jwt.claims().extra.to_owned());
+            // let jwt =
+            //     match jwtk::decode_without_verify::<BTreeMap<String, Value>>(jwt_string.as_str()) {
+            //         Ok(v) => v,
+            //         Err(_) => return Err(DeserilizationError::ReadJwtError),
+            //     };
+            //
+            // certificate_chain.push(jwt.claims().extra.to_owned());
         }
 
         // read length of certificate_chain vec
@@ -212,16 +206,16 @@ impl MCDeserialize for ConnectionRequestType {
             Err(_) => return Err(DeserilizationError::ReadUtf8StringError),
         };
 
-        let raw_token =
-            match jwtk::decode_without_verify::<BTreeMap<String, Value>>(raw_token_string.as_str())
-            {
-                Ok(v) => v.claims().extra.clone(),
-                Err(_) => return Err(DeserilizationError::ReadJwtError),
-            };
+        // let raw_token =
+        //     match jwtk::decode_without_verify::<BTreeMap<String, Value>>(raw_token_string.as_str())
+        //     {
+        //         Ok(v) => v.claims().extra.clone(),
+        //         Err(_) => return Err(DeserilizationError::ReadJwtError),
+        //     };
 
         return Ok(Self {
             certificate_chain,
-            raw_token,
+            raw_token: BTreeMap::new(),
         });
     }
 }
