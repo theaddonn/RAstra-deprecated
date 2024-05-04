@@ -1,5 +1,5 @@
 use bedrock_core::types::*;
-use serialize_derive::{MCProtoSerialize, MCProtoDeserialize};
+use serialize_derive::{MCProtoDeserialize, MCProtoSerialize};
 
 use serialize::proto::de::MCProtoDeserialize;
 use serialize::proto::ser::MCProtoSerialize;

@@ -23,7 +23,6 @@ use crate::proto::error::SerilizationError;
 /// ```
 ///
 pub trait MCProtoSerialize {
-
     /// proto_serialize is a trait function that has the own type and
     /// a buffer that the type should serialize itself into.
     #[inline]

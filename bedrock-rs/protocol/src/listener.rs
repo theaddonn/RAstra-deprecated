@@ -1,6 +1,6 @@
-use core::net::{SocketAddrV4, SocketAddrV6};
-use core::net::SocketAddr;
 use crate::error::ListenerError;
+use core::net::SocketAddr;
+use core::net::{SocketAddrV4, SocketAddrV6};
 
 pub struct Listener {
     rak_listener: rak_rs::Listener,
@@ -9,15 +9,15 @@ pub struct Listener {
 
 impl Listener {
     pub async fn build(listener_config: ListenerConfig) -> Result<Self, ListenerError> {
-        let rak_listener = rak_rs::Listener::bind(SocketAddr::V4(listener_config.socket_addr_v4.clone())).await;
+        let rak_listener =
+            rak_rs::Listener::bind(SocketAddr::V4(listener_config.socket_addr_v4.clone())).await;
 
         let rak_listener = match rak_listener {
-            Ok(v) => { v }
-            Err(_) => { return Err(ListenerError::AddrBindErr) }
+            Ok(v) => v,
+            Err(_) => return Err(ListenerError::AddrBindErr),
         };
 
-
-        Ok(Self{
+        Ok(Self {
             rak_listener,
             config: listener_config,
         })
@@ -27,11 +27,8 @@ impl Listener {
         self.rak_listener.start().await;
     }
 
+    pub fn accept(&mut self) {}
 
-    pub fn accept(&mut self) {
-
-    }
-    
     fn get_options(&self) -> &ListenerConfig {
         &self.config
     }
@@ -44,4 +41,3 @@ pub struct ListenerConfig {
     pub socket_addr_v4: SocketAddrV4,
     pub socket_addr_v6: SocketAddrV6,
 }
-

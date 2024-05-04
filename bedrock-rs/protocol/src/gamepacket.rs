@@ -151,4 +151,3 @@ pub enum GamePacket {
     RequestNetworkSettings(NetworkSettingsRequestPacket),
     AlexEntityAnimation(),
 }
-

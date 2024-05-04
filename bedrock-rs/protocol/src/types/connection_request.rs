@@ -1,8 +1,8 @@
-use std::collections::BTreeMap;
-use std::io::{Cursor, Read};
 use byteorder::LittleEndian;
 use byteorder::ReadBytesExt;
 use serde_json::Value;
+use std::collections::BTreeMap;
+use std::io::{Cursor, Read};
 use varint_rs::VarintReader;
 
 use serialize::proto::de::MCProtoDeserialize;
@@ -81,8 +81,10 @@ pub struct ConnectionRequestType {
 
 // TODO: Add MCSerialize
 impl MCProtoSerialize for ConnectionRequestType {
-    fn proto_serialize(&self, buf: &mut Vec<u8>) -> Result<(), SerilizationError> where Self: Sized {
-
+    fn proto_serialize(&self, buf: &mut Vec<u8>) -> Result<(), SerilizationError>
+    where
+        Self: Sized,
+    {
         // Write entire length
         // 8 = i32 + i32 for length of both
         //match buf.write_u64_varint((self.certificate_chain.len() + self.certificate_chain.len() + 8) as u64) {
@@ -125,8 +127,8 @@ impl MCProtoDeserialize for ConnectionRequestType {
 
         // read length of certificate_chain vec
         let certificate_chain_len = match cursor.read_i32::<LittleEndian>() {
-            Ok(l) => { l }
-            Err(_) => { return Err(DeserilizationError::ReadIOError) }
+            Ok(l) => l,
+            Err(_) => return Err(DeserilizationError::ReadIOError),
         };
 
         let mut certificate_chain_buf = vec![0; certificate_chain_len as usize];
@@ -194,8 +196,8 @@ impl MCProtoDeserialize for ConnectionRequestType {
 
         // read length of certificate_chain vec
         let raw_token_len = match cursor.read_i32::<LittleEndian>() {
-            Ok(l) => { l }
-            Err(_) => { return Err(DeserilizationError::ReadIOError) }
+            Ok(l) => l,
+            Err(_) => return Err(DeserilizationError::ReadIOError),
         };
 
         let mut raw_token_buf = vec![0; raw_token_len as usize];

@@ -1,5 +1,5 @@
-use std::io::{Cursor, Error, Read, Write};
 use byteorder::{BigEndian, ByteOrder, LittleEndian, ReadBytesExt, WriteBytesExt};
+use std::io::{Cursor, Error, Read, Write};
 
 use varint_rs::{VarintReader, VarintWriter};
 
@@ -14,8 +14,8 @@ impl MCProtoSerialize for i8 {
         Self: Sized,
     {
         match buf.write_i8(*self) {
-            Ok(_) => { Ok(()) }
-            Err(_) => { Err(SerilizationError::WriteIOError) }
+            Ok(_) => Ok(()),
+            Err(_) => Err(SerilizationError::WriteIOError),
         }
     }
 }
@@ -26,8 +26,8 @@ impl MCProtoDeserialize for i8 {
         Self: Sized,
     {
         match data.read_i8() {
-            Ok(v) => { Ok(v) }
-            Err(_) => { Err(DeserilizationError::ReadIOError) }
+            Ok(v) => Ok(v),
+            Err(_) => Err(DeserilizationError::ReadIOError),
         }
     }
 }
@@ -39,8 +39,8 @@ impl MCProtoSerialize for u8 {
         Self: Sized,
     {
         match buf.write_u8(*self) {
-            Ok(_) => { Ok(()) }
-            Err(_) => { Err(SerilizationError::WriteIOError) }
+            Ok(_) => Ok(()),
+            Err(_) => Err(SerilizationError::WriteIOError),
         }
     }
 }
@@ -51,8 +51,8 @@ impl MCProtoDeserialize for u8 {
         Self: Sized,
     {
         match data.read_u8() {
-            Ok(v) => { Ok(v) }
-            Err(_) => { Err(DeserilizationError::ReadIOError) }
+            Ok(v) => Ok(v),
+            Err(_) => Err(DeserilizationError::ReadIOError),
         }
     }
 }
@@ -64,8 +64,8 @@ impl MCProtoSerialize for bedrock_core::types::i16le {
         Self: Sized,
     {
         match buf.write_i16::<LittleEndian>(self.0) {
-            Ok(_) => { Ok(()) }
-            Err(_) => { Err(SerilizationError::WriteIOError) }
+            Ok(_) => Ok(()),
+            Err(_) => Err(SerilizationError::WriteIOError),
         }
     }
 }
@@ -76,8 +76,8 @@ impl MCProtoDeserialize for bedrock_core::types::i16le {
         Self: Sized,
     {
         match data.read_i16::<LittleEndian>() {
-            Ok(v) => { Ok(Self(v)) }
-            Err(_) => { Err(DeserilizationError::ReadIOError) }
+            Ok(v) => Ok(Self(v)),
+            Err(_) => Err(DeserilizationError::ReadIOError),
         }
     }
 }
@@ -88,8 +88,8 @@ impl MCProtoSerialize for bedrock_core::types::i16be {
         Self: Sized,
     {
         match buf.write_i16::<BigEndian>(self.0) {
-            Ok(_) => { Ok(()) }
-            Err(_) => { Err(SerilizationError::WriteIOError) }
+            Ok(_) => Ok(()),
+            Err(_) => Err(SerilizationError::WriteIOError),
         }
     }
 }
@@ -100,8 +100,8 @@ impl MCProtoDeserialize for bedrock_core::types::i16be {
         Self: Sized,
     {
         match data.read_i16::<BigEndian>() {
-            Ok(v) => { Ok(Self(v)) }
-            Err(_) => { Err(DeserilizationError::ReadIOError) }
+            Ok(v) => Ok(Self(v)),
+            Err(_) => Err(DeserilizationError::ReadIOError),
         }
     }
 }
@@ -113,8 +113,8 @@ impl MCProtoSerialize for bedrock_core::types::u16le {
         Self: Sized,
     {
         match buf.write_u16::<LittleEndian>(self.0) {
-            Ok(_) => { Ok(()) }
-            Err(_) => { Err(SerilizationError::WriteIOError) }
+            Ok(_) => Ok(()),
+            Err(_) => Err(SerilizationError::WriteIOError),
         }
     }
 }
@@ -125,8 +125,8 @@ impl MCProtoDeserialize for bedrock_core::types::u16le {
         Self: Sized,
     {
         match data.read_u16::<LittleEndian>() {
-            Ok(v) => { Ok(Self(v)) }
-            Err(_) => { Err(DeserilizationError::ReadIOError) }
+            Ok(v) => Ok(Self(v)),
+            Err(_) => Err(DeserilizationError::ReadIOError),
         }
     }
 }
@@ -137,8 +137,8 @@ impl MCProtoSerialize for bedrock_core::types::u16be {
         Self: Sized,
     {
         match buf.write_u16::<BigEndian>(self.0) {
-            Ok(_) => { Ok(()) }
-            Err(_) => { Err(SerilizationError::WriteIOError) }
+            Ok(_) => Ok(()),
+            Err(_) => Err(SerilizationError::WriteIOError),
         }
     }
 }
@@ -149,8 +149,8 @@ impl MCProtoDeserialize for bedrock_core::types::u16be {
         Self: Sized,
     {
         match data.read_u16::<BigEndian>() {
-            Ok(v) => { Ok(Self(v)) }
-            Err(_) => { Err(DeserilizationError::ReadIOError) }
+            Ok(v) => Ok(Self(v)),
+            Err(_) => Err(DeserilizationError::ReadIOError),
         }
     }
 }
@@ -163,8 +163,8 @@ impl MCProtoSerialize for bedrock_core::types::i32le {
         Self: Sized,
     {
         match buf.write_i32::<LittleEndian>(self.0) {
-            Ok(_) => { Ok(()) }
-            Err(_) => { Err(SerilizationError::WriteIOError) }
+            Ok(_) => Ok(()),
+            Err(_) => Err(SerilizationError::WriteIOError),
         }
     }
 }
@@ -175,8 +175,8 @@ impl MCProtoDeserialize for bedrock_core::types::i32le {
         Self: Sized,
     {
         match data.read_i32::<LittleEndian>() {
-            Ok(v) => { Ok(Self(v)) }
-            Err(_) => { Err(DeserilizationError::ReadIOError) }
+            Ok(v) => Ok(Self(v)),
+            Err(_) => Err(DeserilizationError::ReadIOError),
         }
     }
 }
@@ -187,8 +187,8 @@ impl MCProtoSerialize for bedrock_core::types::i32be {
         Self: Sized,
     {
         match buf.write_i32::<BigEndian>(self.0) {
-            Ok(_) => { Ok(()) }
-            Err(_) => { Err(SerilizationError::WriteIOError) }
+            Ok(_) => Ok(()),
+            Err(_) => Err(SerilizationError::WriteIOError),
         }
     }
 }
@@ -199,8 +199,8 @@ impl MCProtoDeserialize for bedrock_core::types::i32be {
         Self: Sized,
     {
         match data.read_i32::<BigEndian>() {
-            Ok(v) => { Ok(Self(v)) }
-            Err(_) => { Err(DeserilizationError::ReadIOError) }
+            Ok(v) => Ok(Self(v)),
+            Err(_) => Err(DeserilizationError::ReadIOError),
         }
     }
 }
@@ -213,8 +213,8 @@ impl MCProtoSerialize for bedrock_core::types::u32le {
         Self: Sized,
     {
         match buf.write_u32::<LittleEndian>(self.0) {
-            Ok(_) => { Ok(()) }
-            Err(_) => { Err(SerilizationError::WriteIOError) }
+            Ok(_) => Ok(()),
+            Err(_) => Err(SerilizationError::WriteIOError),
         }
     }
 }
@@ -225,8 +225,8 @@ impl MCProtoDeserialize for bedrock_core::types::u32le {
         Self: Sized,
     {
         match data.read_u32::<LittleEndian>() {
-            Ok(v) => { Ok(Self(v)) }
-            Err(_) => { Err(DeserilizationError::ReadIOError) }
+            Ok(v) => Ok(Self(v)),
+            Err(_) => Err(DeserilizationError::ReadIOError),
         }
     }
 }
@@ -237,8 +237,8 @@ impl MCProtoSerialize for bedrock_core::types::u32be {
         Self: Sized,
     {
         match buf.write_u32::<BigEndian>(self.0) {
-            Ok(_) => { Ok(()) }
-            Err(_) => { Err(SerilizationError::WriteIOError) }
+            Ok(_) => Ok(()),
+            Err(_) => Err(SerilizationError::WriteIOError),
         }
     }
 }
@@ -249,8 +249,8 @@ impl MCProtoDeserialize for bedrock_core::types::u32be {
         Self: Sized,
     {
         match data.read_u32::<BigEndian>() {
-            Ok(v) => { Ok(Self(v)) }
-            Err(_) => { Err(DeserilizationError::ReadIOError) }
+            Ok(v) => Ok(Self(v)),
+            Err(_) => Err(DeserilizationError::ReadIOError),
         }
     }
 }
@@ -263,8 +263,8 @@ impl MCProtoSerialize for bedrock_core::types::i64le {
         Self: Sized,
     {
         match buf.write_i64::<LittleEndian>(self.0) {
-            Ok(_) => { Ok(()) }
-            Err(_) => { Err(SerilizationError::WriteIOError) }
+            Ok(_) => Ok(()),
+            Err(_) => Err(SerilizationError::WriteIOError),
         }
     }
 }
@@ -275,8 +275,8 @@ impl MCProtoDeserialize for bedrock_core::types::i64le {
         Self: Sized,
     {
         match data.read_i64::<LittleEndian>() {
-            Ok(v) => { Ok(Self(v)) }
-            Err(_) => { Err(DeserilizationError::ReadIOError) }
+            Ok(v) => Ok(Self(v)),
+            Err(_) => Err(DeserilizationError::ReadIOError),
         }
     }
 }
@@ -287,8 +287,8 @@ impl MCProtoSerialize for bedrock_core::types::i64be {
         Self: Sized,
     {
         match buf.write_i64::<BigEndian>(self.0) {
-            Ok(_) => { Ok(()) }
-            Err(_) => { Err(SerilizationError::WriteIOError) }
+            Ok(_) => Ok(()),
+            Err(_) => Err(SerilizationError::WriteIOError),
         }
     }
 }
@@ -299,8 +299,8 @@ impl MCProtoDeserialize for bedrock_core::types::i64be {
         Self: Sized,
     {
         match data.read_i64::<BigEndian>() {
-            Ok(v) => { Ok(Self(v)) }
-            Err(_) => { Err(DeserilizationError::ReadIOError) }
+            Ok(v) => Ok(Self(v)),
+            Err(_) => Err(DeserilizationError::ReadIOError),
         }
     }
 }
@@ -313,8 +313,8 @@ impl MCProtoSerialize for bedrock_core::types::u64le {
         Self: Sized,
     {
         match buf.write_u64::<LittleEndian>(self.0) {
-            Ok(_) => { Ok(()) }
-            Err(_) => { Err(SerilizationError::WriteIOError) }
+            Ok(_) => Ok(()),
+            Err(_) => Err(SerilizationError::WriteIOError),
         }
     }
 }
@@ -325,8 +325,8 @@ impl MCProtoDeserialize for bedrock_core::types::u64le {
         Self: Sized,
     {
         match data.read_u64::<LittleEndian>() {
-            Ok(v) => { Ok(Self(v)) }
-            Err(_) => { Err(DeserilizationError::ReadIOError) }
+            Ok(v) => Ok(Self(v)),
+            Err(_) => Err(DeserilizationError::ReadIOError),
         }
     }
 }
@@ -339,8 +339,8 @@ impl MCProtoSerialize for bedrock_core::types::i128le {
         Self: Sized,
     {
         match buf.write_i128::<LittleEndian>(self.0) {
-            Ok(_) => { Ok(()) }
-            Err(_) => { Err(SerilizationError::WriteIOError) }
+            Ok(_) => Ok(()),
+            Err(_) => Err(SerilizationError::WriteIOError),
         }
     }
 }
@@ -351,8 +351,8 @@ impl MCProtoDeserialize for bedrock_core::types::i128le {
         Self: Sized,
     {
         match data.read_i128::<LittleEndian>() {
-            Ok(v) => { Ok(Self(v)) }
-            Err(_) => { Err(DeserilizationError::ReadIOError) }
+            Ok(v) => Ok(Self(v)),
+            Err(_) => Err(DeserilizationError::ReadIOError),
         }
     }
 }
@@ -363,8 +363,8 @@ impl MCProtoSerialize for bedrock_core::types::i128be {
         Self: Sized,
     {
         match buf.write_i128::<BigEndian>(self.0) {
-            Ok(_) => { Ok(()) }
-            Err(_) => { Err(SerilizationError::WriteIOError) }
+            Ok(_) => Ok(()),
+            Err(_) => Err(SerilizationError::WriteIOError),
         }
     }
 }
@@ -375,8 +375,8 @@ impl MCProtoDeserialize for bedrock_core::types::i128be {
         Self: Sized,
     {
         match data.read_i128::<BigEndian>() {
-            Ok(v) => { Ok(Self(v)) }
-            Err(_) => { Err(DeserilizationError::ReadIOError) }
+            Ok(v) => Ok(Self(v)),
+            Err(_) => Err(DeserilizationError::ReadIOError),
         }
     }
 }
@@ -389,8 +389,8 @@ impl MCProtoSerialize for bedrock_core::types::u128le {
         Self: Sized,
     {
         match buf.write_u128::<LittleEndian>(self.0) {
-            Ok(_) => { Ok(()) }
-            Err(_) => { Err(SerilizationError::WriteIOError) }
+            Ok(_) => Ok(()),
+            Err(_) => Err(SerilizationError::WriteIOError),
         }
     }
 }
@@ -401,8 +401,8 @@ impl MCProtoDeserialize for bedrock_core::types::u128le {
         Self: Sized,
     {
         match data.read_u128::<LittleEndian>() {
-            Ok(v) => { Ok(Self(v)) }
-            Err(_) => { Err(DeserilizationError::ReadIOError) }
+            Ok(v) => Ok(Self(v)),
+            Err(_) => Err(DeserilizationError::ReadIOError),
         }
     }
 }
@@ -413,8 +413,8 @@ impl MCProtoSerialize for bedrock_core::types::u128be {
         Self: Sized,
     {
         match buf.write_u128::<BigEndian>(self.0) {
-            Ok(_) => { Ok(()) }
-            Err(_) => { Err(SerilizationError::WriteIOError) }
+            Ok(_) => Ok(()),
+            Err(_) => Err(SerilizationError::WriteIOError),
         }
     }
 }
@@ -425,8 +425,8 @@ impl MCProtoDeserialize for bedrock_core::types::u128be {
         Self: Sized,
     {
         match data.read_u128::<BigEndian>() {
-            Ok(v) => { Ok(Self(v)) }
-            Err(_) => { Err(DeserilizationError::ReadIOError) }
+            Ok(v) => Ok(Self(v)),
+            Err(_) => Err(DeserilizationError::ReadIOError),
         }
     }
 }
@@ -439,8 +439,8 @@ impl MCProtoSerialize for f32 {
         Self: Sized,
     {
         match buf.write_f32::<LittleEndian>(*self) {
-            Ok(_) => { Ok(()) }
-            Err(_) => { Err(SerilizationError::WriteIOError) }
+            Ok(_) => Ok(()),
+            Err(_) => Err(SerilizationError::WriteIOError),
         }
     }
 }
@@ -451,8 +451,8 @@ impl MCProtoDeserialize for f32 {
         Self: Sized,
     {
         match data.read_f32::<LittleEndian>() {
-            Ok(v) => { Ok(v) }
-            Err(_) => { Err(DeserilizationError::ReadIOError) }
+            Ok(v) => Ok(v),
+            Err(_) => Err(DeserilizationError::ReadIOError),
         }
     }
 }
@@ -465,8 +465,8 @@ impl MCProtoSerialize for f64 {
         Self: Sized,
     {
         match buf.write_f64::<LittleEndian>(*self) {
-            Ok(_) => { Ok(()) }
-            Err(_) => { Err(SerilizationError::WriteIOError) }
+            Ok(_) => Ok(()),
+            Err(_) => Err(SerilizationError::WriteIOError),
         }
     }
 }
@@ -477,8 +477,8 @@ impl MCProtoDeserialize for f64 {
         Self: Sized,
     {
         match data.read_f64::<LittleEndian>() {
-            Ok(v) => { Ok(v) }
-            Err(_) => { Err(DeserilizationError::ReadIOError) }
+            Ok(v) => Ok(v),
+            Err(_) => Err(DeserilizationError::ReadIOError),
         }
     }
 }
@@ -491,8 +491,8 @@ impl MCProtoSerialize for bedrock_core::types::uvar32 {
         Self: Sized,
     {
         match buf.write_u32_varint(self.0) {
-            Ok(_) => { Ok(()) },
-            Err(_) => { Err(SerilizationError::WriteIOError) },
+            Ok(_) => Ok(()),
+            Err(_) => Err(SerilizationError::WriteIOError),
         }
     }
 }
@@ -503,8 +503,8 @@ impl MCProtoDeserialize for bedrock_core::types::uvar32 {
         Self: Sized,
     {
         match data.read_u32_varint() {
-            Ok(v) => { Ok(Self(v)) },
-            Err(_) => { Err(DeserilizationError::ReadIOError) },
+            Ok(v) => Ok(Self(v)),
+            Err(_) => Err(DeserilizationError::ReadIOError),
         }
     }
 }
@@ -517,8 +517,8 @@ impl MCProtoSerialize for bedrock_core::types::ivar32 {
         Self: Sized,
     {
         match buf.write_i32_varint(self.0) {
-            Ok(_) => { Ok(()) },
-            Err(_) => { Err(SerilizationError::WriteIOError) },
+            Ok(_) => Ok(()),
+            Err(_) => Err(SerilizationError::WriteIOError),
         }
     }
 }
@@ -543,7 +543,7 @@ impl MCProtoSerialize for bedrock_core::types::uvar64 {
         Self: Sized,
     {
         match buf.write_u64_varint(self.0) {
-            Ok(_) => {},
+            Ok(_) => {}
             Err(_) => return Err(SerilizationError::WriteIOError),
         };
 
@@ -571,8 +571,8 @@ impl MCProtoSerialize for bedrock_core::types::ivar64 {
         Self: Sized,
     {
         match buf.write_i64_varint(self.0) {
-            Ok(_) => { Ok(()) },
-            Err(_) => { Err(SerilizationError::WriteIOError) },
+            Ok(_) => Ok(()),
+            Err(_) => Err(SerilizationError::WriteIOError),
         }
     }
 }
@@ -597,18 +597,14 @@ impl MCProtoSerialize for bool {
         Self: Sized,
     {
         match self {
-            true => {
-                match buf.write_u8(1) {
-                    Ok(_) => { Ok(()) }
-                    Err(_) => { Err(SerilizationError::WriteIOError) }
-                }
-            }
-            false => {
-                match buf.write_u8(0) {
-                    Ok(_) => { Ok(()) }
-                    Err(_) => { Err(SerilizationError::WriteIOError) }
-                }
-            }
+            true => match buf.write_u8(1) {
+                Ok(_) => Ok(()),
+                Err(_) => Err(SerilizationError::WriteIOError),
+            },
+            false => match buf.write_u8(0) {
+                Ok(_) => Ok(()),
+                Err(_) => Err(SerilizationError::WriteIOError),
+            },
         }
     }
 }
@@ -620,14 +616,16 @@ impl MCProtoDeserialize for bool {
     {
         // a bool is represented as a byte
         return match cursor.read_u8() {
-            Ok(v) => { match v {
-                // 0 is counted as false
-                0 => { Ok(false) }
-                // Anything about 0 is counted as true
-                _ => { Ok(true) }
-            } }
-            Err(_) => { Err(DeserilizationError::ReadIOError) }
-        }
+            Ok(v) => {
+                match v {
+                    // 0 is counted as false
+                    0 => Ok(false),
+                    // Anything about 0 is counted as true
+                    _ => Ok(true),
+                }
+            }
+            Err(_) => Err(DeserilizationError::ReadIOError),
+        };
     }
 }
 
@@ -640,12 +638,12 @@ impl MCProtoSerialize for String {
     {
         match buf.write_u64_varint(self.len() as u64) {
             Ok(_) => {}
-            Err(_) => { return Err(SerilizationError::WriteIOError) }
+            Err(_) => return Err(SerilizationError::WriteIOError),
         };
 
         match buf.write_all(self.as_bytes()) {
             Ok(_) => {}
-            Err(_) => { return Err(SerilizationError::WriteIOError) }
+            Err(_) => return Err(SerilizationError::WriteIOError),
         };
 
         Ok(())
@@ -658,20 +656,24 @@ impl MCProtoDeserialize for String {
         Self: Sized,
     {
         let len = match cursor.read_u64_varint() {
-            Ok(v) => { v },
-            Err(_) => { return Err(DeserilizationError::ReadIOError); },
+            Ok(v) => v,
+            Err(_) => {
+                return Err(DeserilizationError::ReadIOError);
+            }
         };
 
         let mut string_buf = vec![0u8; len as usize];
 
         match cursor.read_exact(&mut *string_buf) {
             Ok(_) => {}
-            Err(_) => { return Err(DeserilizationError::NotEnoughtRemainingError); },
+            Err(_) => {
+                return Err(DeserilizationError::NotEnoughtRemainingError);
+            }
         }
 
         match String::from_utf8(string_buf) {
-            Ok(str) => { Ok(str) },
-            Err(_) => { Err(DeserilizationError::ReadUtf8StringError) },
+            Ok(str) => Ok(str),
+            Err(_) => Err(DeserilizationError::ReadUtf8StringError),
         }
     }
 }
@@ -679,16 +681,19 @@ impl MCProtoDeserialize for String {
 // vec
 
 impl<T: MCProtoSerialize> MCProtoSerialize for Vec<T> {
-    fn proto_serialize(&self, buf: &mut Vec<u8>) -> Result<(), SerilizationError> where Self: Sized {
+    fn proto_serialize(&self, buf: &mut Vec<u8>) -> Result<(), SerilizationError>
+    where
+        Self: Sized,
+    {
         match buf.write_u64_varint(self.len() as u64) {
             Ok(_) => {}
-            Err(_) => { return Err(SerilizationError::WriteIOError) }
+            Err(_) => return Err(SerilizationError::WriteIOError),
         };
 
         for item in self {
             match item.proto_serialize(buf) {
                 Ok(_) => {}
-                Err(e) => { return Err(e) }
+                Err(e) => return Err(e),
             };
         }
 

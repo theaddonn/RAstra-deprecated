@@ -1,5 +1,5 @@
 use bedrock_core::types::*;
-use serialize_derive::{MCProtoSerialize, MCProtoDeserialize};
+use serialize_derive::{MCProtoDeserialize, MCProtoSerialize};
 
 #[derive(Debug, Copy, Clone, MCProtoSerialize, MCProtoDeserialize)]
 pub struct NetworkSettingsPacket {
