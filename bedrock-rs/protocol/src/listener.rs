@@ -1,14 +1,15 @@
-use std::net::{SocketAddrV4, SocketAddrV6};
+use core::net::{SocketAddrV4, SocketAddrV6};
+use core::net::SocketAddr;
 use crate::error::ListenerError;
 
 pub struct Listener {
     rak_listener: rak_rs::Listener,
-    pub config: ListenerConfig,
+    config: ListenerConfig,
 }
 
 impl Listener {
-    pub async fn build(listener_config: ListenerOptions) -> Result<Self, ListenerError> {
-        let rak_listener = rak_rs::Listener::bind(listener_config.socket_addr_v4).await;
+    pub async fn build(listener_config: ListenerConfig) -> Result<Self, ListenerError> {
+        let rak_listener = rak_rs::Listener::bind(SocketAddr::V4(listener_config.socket_addr_v4.clone())).await;
 
         let rak_listener = match rak_listener {
             Ok(v) => { v }
@@ -16,10 +17,13 @@ impl Listener {
         };
 
 
-
+        Ok(Self{
+            rak_listener,
+            config: listener_config,
+        })
     }
 
-    pub fn start(&mut self) {
+    pub async fn start(&mut self) {
         self.rak_listener.start().await;
     }
 
@@ -27,12 +31,17 @@ impl Listener {
     pub fn accept(&mut self) {
 
     }
+    
+    fn get_options(&self) -> &ListenerConfig {
+        &self.config
+    }
 }
 
-pub struct ListenerOptions {
-    name: String,
-    sub_name: String,
-    socket_addr_v4: SocketAddrV4,
-    socket_addr_v6: SocketAddrV6,
+#[derive(Debug, Eq, PartialEq)]
+pub struct ListenerConfig {
+    pub name: String,
+    pub sub_name: String,
+    pub socket_addr_v4: SocketAddrV4,
+    pub socket_addr_v6: SocketAddrV6,
 }
 
