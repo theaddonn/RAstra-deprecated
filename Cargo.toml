@@ -33,17 +33,17 @@ snap = "1.1.1"
 
 jsonwebtoken = { version = "9.3.0" }
 ecdsa = { version = "0.16.9", features = ["pkcs8", "signing", "serde", "der", "arithmetic", "pem", "sha2", "dev", "digest", "alloc", "default", "hazmat", "serdect", "verifying", "rfc6979", "spki", "std"] }
-p384 = { version = "0.13.0", features = ["pkcs8", "ecdsa", "arithmetic", "serde", "pem", "hash2curve", "std", "sha2", "sha384", "jwk", "bits", "ecdh", "digest", "ecdsa-core", "serdect", "hex-literal", "alloc", "expose-field", "default", "test-vectors", "voprf"] }
+#p384 = { version = "0.13.0", features = ["pkcs8", "ecdsa", "arithmetic", "serde", "pem", "hash2curve", "std", "sha2", "sha384", "jwk", "bits", "ecdh", "digest", "ecdsa-core", "serdect", "hex-literal", "alloc", "expose-field", "default", "test-vectors", "voprf"] }
 
 base64 = "0.22.0"
 
-crypto = { version = "0.5.1", features = ["cipher"] }
-sha2 = "0.10.8"
-aes = "0.8.4"
-ctr = "0.9.2"
-block-padding = "0.3.3"
-signature = "2.2.0"
-log = "0.4.21"
+#crypto = { version = "0.5.1", features = ["cipher"] }
+#sha2 = "0.10.8"
+#aes = "0.8.4"
+#ctr = "0.9.2"
+#block-padding = "0.3.3"
+#signature = "2.2.0"
+#log = "0.4.21"
 
 [dependencies.rak-rs]
 version = "0.3.2"
