@@ -1,33 +1,37 @@
+use crate::conn::Connection;
 use crate::error::ListenerError;
+use crate::info::{MINECRAFT_EDITION_MOTD, MINECRAFT_VERSION, PROTOCOL_VERSION};
 use core::net::SocketAddr;
 use core::net::{SocketAddrV4, SocketAddrV6};
+use rak_rs::connection::Connection as RakConnection;
+use rak_rs::error::server::ServerError;
 use rak_rs::mcpe::motd::Gamemode;
 use rak_rs::Motd;
 use rand::{Rng, RngCore};
-use std::str::FromStr;
-use rak_rs::error::server::ServerError;
 use ring::error::Unspecified;
-use crate::info::{MINECRAFT_EDITION_MOTD, MINECRAFT_VERSION, PROTOCOL_VERSION};
+use std::str::FromStr;
 
 pub struct Listener {
     rak_listener: rak_rs::Listener,
     socket_addr_v4: SocketAddrV4,
     // TODO: Add this when ipv6 is supported by rak-rs
-    socket_addr_v6: SocketAddrV6,
+    // socket_addr_v6: SocketAddrV6,
     guid: u64,
     config: ListenerConfig,
 }
 
 impl Listener {
-    pub async fn new(listener_config: ListenerConfig, socket_addr_v4: SocketAddrV4) -> Result<Self, ListenerError> {
+    pub async fn new(
+        listener_config: ListenerConfig,
+        socket_addr_v4: SocketAddrV4,
+    ) -> Result<Self, ListenerError> {
         // Bind the Raknet Listener
-        let rak_listener =
-            rak_rs::Listener::bind(SocketAddr::V4(socket_addr_v4.clone())).await;
+        let rak_listener = rak_rs::Listener::bind(SocketAddr::V4(socket_addr_v4.clone())).await;
 
         // Check for success
         let mut rak_listener = match rak_listener {
             Ok(v) => v,
-            Err(_) => return Err(ListenerError::AddrBindErr),
+            Err(_) => return Err(ListenerError::AddrBindError),
         };
 
         // generate a random guid
@@ -54,20 +58,25 @@ impl Listener {
             rak_listener,
             config: listener_config,
             socket_addr_v4,
-            // TODO: Add this when ipv6 is supported by rak-rs
-            socket_addr_v6: SocketAddrV6::from_str("::1:19132").unwrap(),
             guid,
         })
     }
 
     pub async fn start(&mut self) -> Result<(), ListenerError> {
         match self.rak_listener.start().await {
-            Ok(_) => { Ok(()) }
-            Err(_) => { Err(ListenerError::) }
-        };
+            Ok(_) => Ok(()),
+            Err(e) => Err(ListenerError::AlreadyOnline),
+        }
     }
 
-    pub fn accept(&mut self) {}
+    pub async fn accept(&mut self) -> Result<Connection, ListenerError> {
+        let rak_conn = match self.rak_listener.accept().await {
+            Ok(c) => c,
+            Err(_) => return Err(ListenerError::NotListening),
+        };
+
+        Ok(Connection::new(rak_conn))
+    }
 
     fn get_config(&self) -> &ListenerConfig {
         &self.config
@@ -81,7 +90,7 @@ impl Listener {
         self.config = config;
     }
 
-    fn update_pongdata(){}
+    fn update_pongdata() {}
 }
 
 #[derive(Debug, Eq, PartialEq)]
