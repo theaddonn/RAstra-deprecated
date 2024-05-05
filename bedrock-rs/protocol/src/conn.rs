@@ -10,6 +10,7 @@ use serialize::proto::ser::MCProtoSerialize;
 use std::cell::Cell;
 use std::io::{Cursor, Error, Write};
 use varint_rs::{VarintReader, VarintWriter};
+use serialize::error::DeserilizationError;
 
 pub struct Connection {
     rak_connection: RakConnection,
@@ -124,20 +125,19 @@ impl Connection {
             };
         }
 
+        let mut gamepackets = vec![];
+
         'gamepacket_read: loop {
-            let len = match data.read_u64_varint() {
-                Ok(v) => v,
-                Err(_) => return Err(ConnectionError::ReadIOError),
+            match GamePacket::pk_deserialize(&mut data) {
+                Ok(v) => { gamepackets.push(v) }
+                Err(e) => { return Err(ConnectionError::DeserializeError(e)) }
             };
 
-            let id = match data.read_u64_varint() {
-                Ok(v) => v,
-                Err(_) => return Err(ConnectionError::ReadIOError),
-            };
-
-
+            if (data.position() == data.get_ref().len() as u64) {
+                break 'gamepacket_read;
+            }
         }
 
-        Ok(vec![])
+        Ok(gamepackets)
     }
 }

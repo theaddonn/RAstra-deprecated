@@ -3,8 +3,6 @@ use crate::packets::handshake_server_to_client::HandshakeServerToClientPacket;
 use crate::packets::login::LoginPacket;
 use crate::packets::network_settings::NetworkSettingsPacket;
 use crate::packets::network_settings_request::NetworkSettingsRequestPacket;
-use num_derive::FromPrimitive;
-use num_traits::FromPrimitive;
 use serialize::error::{DeserilizationError, SerilizationError};
 use serialize::proto::ser::MCProtoSerialize;
 use serialize::proto::de::MCProtoDeserialize;
@@ -208,10 +206,10 @@ macro_rules! ser_packet {
 }
 
 macro_rules! de_packet {
-    ($cursor:expr, $packet_struct:ident, $packet_enum:expr) => {
+    ($cursor:expr, $packet_struct:ty) => {
         {
-            match $packet::proto_deserialize(&mut $cursor) {
-                Ok(v) => { Ok(gamepacket::GamePacket::$packet_enum(v)) }
+            match <$packet_struct>::proto_deserialize($cursor) {
+                Ok(v) => { v }
                 Err(e) => { return Err(e) }
             }
         }
@@ -372,15 +370,23 @@ impl GamePacket {
     }
 
     pub fn pk_deserialize(cursor: &mut Cursor<Vec<u8>>) -> Result<GamePacket, DeserilizationError> {
+        // Read the gamepacket length
+        // We don't need it
+        match cursor.read_u64_varint() {
+            Ok(_) => {}
+            Err(_) => { return Err(DeserilizationError::ReadIOError) }
+        };
+
+        // Read the gamepacket ID
         let gamepacket_id: GamePacketID = match cursor.read_u64_varint() {
             Ok(v) => { unsafe { transmute(v) } },
             Err(_) => { return Err(DeserilizationError::ReadIOError) }
         };
 
         match gamepacket_id {
-            GamePacketID::LoginID => { de_packet!(&cursor, LoginPacket, GamePacket::Login) }
+            GamePacketID::LoginID => { Ok(GamePacket::Login(de_packet!(cursor, LoginPacket))) }
             GamePacketID::PlayStatusID => { unimplemented!() }
-            GamePacketID::ServerToClientHandshakeID => { de_packet!(&cursor, HandshakeServerToClientPacket, GamePacket::ServerToClientHandshake) }
+            GamePacketID::ServerToClientHandshakeID => { Ok(GamePacket::ServerToClientHandshake(de_packet!(cursor, HandshakeServerToClientPacket))) }
             GamePacketID::ClientToServerHandshakeID => { unimplemented!() }
             GamePacketID::DisconnectID => { unimplemented!() }
             GamePacketID::ResourcePacksInfoID => { unimplemented!() }
@@ -509,7 +515,7 @@ impl GamePacket {
             GamePacketID::UpdateBlockPropertiesID => { unimplemented!() }
             GamePacketID::ClientCacheBlobStatusID => { unimplemented!() }
             GamePacketID::ClientCacheMissResponseID => { unimplemented!() }
-            GamePacketID::NetworkSettingsID => { de_packet!(&cursor, NetworkSettingsPacket, GamePacket::NetworkSettings) }
+            GamePacketID::NetworkSettingsID => { Ok(GamePacket::NetworkSettings(de_packet!(cursor, NetworkSettingsPacket))) }
             GamePacketID::PlayerAuthInputID => { unimplemented!() }
             GamePacketID::CreativeContentID => { unimplemented!() }
             GamePacketID::PlayerEnchantOptionsID => { unimplemented!() }
@@ -523,7 +529,7 @@ impl GamePacket {
             GamePacketID::SubChunkPacketID => { unimplemented!() }
             GamePacketID::SubChunkRequestPacketID => { unimplemented!() }
             GamePacketID::DimensionDataID => { unimplemented!() }
-            GamePacketID::RequestNetworkSettingsID => { de_packet!(&cursor, NetworkSettingsRequestPacket, GamePacket::RequestNetworkSettings) }
+            GamePacketID::RequestNetworkSettingsID => { Ok(GamePacket::RequestNetworkSettings(de_packet!(cursor, NetworkSettingsRequestPacket))) }
             GamePacketID::AlexEntityAnimationID => { unimplemented!() }
         }
     }
