@@ -43,59 +43,19 @@ async fn main() {
 
     let pk = conn.recv_gamepackets().await.unwrap();
 
-    println!("{:?}", pk);
+    println!("PKS: {:?}", pk);
 
-    //let mut conn = listener.accept().unwrap();
+    conn.send_gamepackets(vec![NetworkSettings(NetworkSettingsPacket {
+        compression_threshold: u16le(0),
+        compression_algorythm: u16le(0xFFFF),
+        client_throttle_enabled: false,
+        client_throttle_threshold: 0,
+        client_throttle_scalar: 0.0,
+    })]).await.unwrap();
 
-    // let mut data = Cursor::new(conn.recv().await.unwrap());
-    //
-    // data.get_u8();
-    // data.read_u64_varint().unwrap();
-    // data.read_u64_varint().unwrap();
-    //
-    // let pk = NetworkSettingsRequestPacket::proto_deserialize(
-    //     &mut data
-    // ).unwrap();
-    //
-    // println!("{:#?}", pk);
-    //
-    // let nspk = NetworkSettingsPacket {
-    //     compression_threshold: u16le(0),
-    //     compression_algorythm: u16le(1),
-    //     client_throttle_enabled: false,
-    //     client_throttle_threshold: 0,
-    //     client_throttle_scalar: 0.0,
-    // };
-    //
-    // let mut nspk_buf = vec![];
-    //
-    // nspk_buf.write_u64_varint(NetworkSettings(nspk).id()).unwrap();
-    // nspk.proto_serialize(&mut nspk_buf).unwrap();
-    //
-    // let mut buf = vec![];
-    // buf.put_u8(bedrock_rs::protocol::info::RAKNET_GAME_PACKET_ID);
-    // buf.put_u8(0);
-    // buf.write_u64_varint(nspk_buf.len() as u64).unwrap();
-    //
-    // buf.put_slice(&*nspk_buf);
-    //
-    // conn.send(&*buf, false).await.unwrap();
-    //
-    // println!("{:#?}", nspk);
-    //
-    // let mut data = Cursor::new(conn.recv().await.unwrap());
-    //
-    // data.get_u8();
-    // data.get_u8();
-    // data.read_u64_varint().unwrap();
-    // data.read_u64_varint().unwrap();
-    //
-    // let pk = LoginPacket::proto_deserialize(
-    //     &mut data
-    // ).unwrap();
-    //
-    //
-    // println!("{:#?}", pk);
+    let pk = conn.recv_gamepackets().await.unwrap();
+
+    println!("PKS: {:?}", pk);
 
     loop {}
 }
