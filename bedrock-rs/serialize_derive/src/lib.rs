@@ -22,7 +22,7 @@ pub fn proto_serialize(item: proc_macro::TokenStream) -> proc_macro::TokenStream
 
     let expanded = quote! {
         impl #impl_generics serialize::proto::ser::MCProtoSerialize for #name #ty_generics #where_clause {
-            fn proto_serialize(&self, buf: &mut Vec<u8>) -> Result<(), serialize::proto::error::SerilizationError> where Self: Sized {
+            fn proto_serialize(&self, buf: &mut Vec<u8>) -> Result<(), serialize::error::SerilizationError> where Self: Sized {
                 #ser
                 Ok(())
             }
@@ -47,7 +47,7 @@ pub fn proto_deserialize(item: proc_macro::TokenStream) -> proc_macro::TokenStre
 
     let expanded = quote! {
         impl #impl_generics serialize::proto::de::MCProtoDeserialize for #name #ty_generics #where_clause {
-            fn proto_deserialize(cursor: &mut std::io::Cursor<Vec<u8>>) -> Result<Self, serialize::proto::error::DeserilizationError> where Self: Sized {
+            fn proto_deserialize(cursor: &mut std::io::Cursor<Vec<u8>>) -> Result<Self, serialize::error::DeserilizationError> where Self: Sized {
                 Ok(
                     Self {
                         #de

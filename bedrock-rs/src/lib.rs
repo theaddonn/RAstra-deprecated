@@ -8,14 +8,14 @@ pub mod protocol {
     pub mod ser {
         pub use serialize_derive::MCProtoSerialize;
 
-        pub use serialize::proto::error::SerilizationError;
+        pub use serialize::error::SerilizationError;
         pub use serialize::proto::ser::*;
     }
 
     pub mod de {
         pub use serialize_derive::MCProtoDeserialize;
 
+        pub use serialize::error::DeserilizationError;
         pub use serialize::proto::de::*;
-        pub use serialize::proto::error::DeserilizationError;
     }
 }

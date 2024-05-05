@@ -1,4 +1,4 @@
-use crate::proto::error::SerilizationError;
+use crate::error::SerilizationError;
 
 /// MCProtoSerialize is a trait that needs to be implemented
 /// for all types that should be serializable into bytes for

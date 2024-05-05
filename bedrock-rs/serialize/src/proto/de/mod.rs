@@ -1,6 +1,6 @@
 use std::io::Cursor;
 
-use crate::proto::error::DeserilizationError;
+use crate::error::DeserilizationError;
 
 ///
 pub trait MCProtoDeserialize {
