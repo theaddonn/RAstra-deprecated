@@ -21,3 +21,6 @@ tokio = { version = "1", features = ["full"] }
 
 flate2 = "1.0"
 snap = "1.1"
+
+num-traits = "0.2.19"
+num-derive = "0.4.2"

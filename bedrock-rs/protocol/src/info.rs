@@ -1,3 +1,5 @@
+use num_derive::FromPrimitive;
+
 pub const RAKNET_GAME_PACKET_ID: u8 = 0xfe;
 pub const PROTOCOL_VERSION: i32 = 671;
 pub const MINECRAFT_VERSION: &'static str = "1.20.80";
@@ -10,7 +12,7 @@ pub const MAGIC: [u8; 16] = [
 pub const MOAJNG_PUBLIC_KEY: &'static str = "MHYwEAYHKoZIzj0CAQYFK4EEACIDYgAECRXueJeTDqNRRgJi/vlRufByu/2G0i2Ebt6YMar5QX/R0DIIyrJMcUpruK4QveTfJSTp3Shlq4Gk34cD/4GUWwkv0DVuzeuB+tXija7HBxii03NHDbPAD0AKnLr2wdAp";
 
 #[repr(u64)]
-#[derive(Debug, Copy, Clone, Eq, PartialEq)]
+#[derive(Debug, Copy, Clone, Eq, PartialEq, FromPrimitive)]
 pub enum GamePacketID {
     LoginID = 1,
     PlayStatusID = 2,

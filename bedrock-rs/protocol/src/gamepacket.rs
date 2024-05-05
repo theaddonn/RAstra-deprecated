@@ -9,7 +9,8 @@ use serialize::proto::de::MCProtoDeserialize;
 use std::io::{Cursor, Error, Write};
 use varint_rs::{VarintReader, VarintWriter};
 use crate::gamepacket::GamePacket::NetworkSettings;
-use core::mem::transmute;
+use num_derive::FromPrimitive;
+use num_traits::FromPrimitive;
 
 #[repr(u64)]
 #[derive(Debug)]
@@ -379,7 +380,10 @@ impl GamePacket {
 
         // Read the gamepacket ID
         let gamepacket_id: GamePacketID = match cursor.read_u64_varint() {
-            Ok(v) => { unsafe { transmute(v) } },
+            Ok(v) => { match GamePacketID::from_u64(v) {
+                Some(pk) => { pk }
+                None => { return Err(DeserilizationError::InvalidGamepacketID) }
+            }},
             Err(_) => { return Err(DeserilizationError::ReadIOError) }
         };
 
