@@ -45,9 +45,3 @@ base64 = "0.22.0"
 #signature = "2.2.0"
 #log = "0.4.21"
 
-[dependencies.rak-rs]
-version = "0.3.2"
-default-features = false
-features = ["async_tokio", "mcpe"]
-path = "rak-rs"
-
