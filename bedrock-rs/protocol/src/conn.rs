@@ -1,201 +1,143 @@
-use std::cell::Cell;
-use std::io::Write;
-use crate::gamepacket::GamePacket;
-use rak_rs::connection::Connection as RakConnection;
-use byteorder::{WriteBytesExt, ReadBytesExt};
-use varint_rs::VarintWriter;
-use serialize::proto::ser::MCProtoSerialize;
 use crate::compression;
-use crate::compression::{CompressionMethod};
+use crate::compression::CompressionMethod;
+use crate::error::{CompressionError, ConnectionError};
+use crate::gamepacket::GamePacket;
 use crate::info::RAKNET_GAME_PACKET_ID;
+use byteorder::{ReadBytesExt, WriteBytesExt};
+use rak_rs::connection::queue::SendQueueError;
+use rak_rs::connection::{Connection as RakConnection, RecvError};
+use serialize::proto::ser::MCProtoSerialize;
+use std::cell::Cell;
+use std::io::{Cursor, Error, Write};
+use varint_rs::{VarintReader, VarintWriter};
 
 pub struct Connection {
     rak_connection: RakConnection,
     compression: Option<Box<dyn CompressionMethod>>,
-    encryption: Option<Box<()>>
+    encryption: Option<Box<()>>,
 }
 
 impl Connection {
-    pub fn handle_login() { unimplemented!() }
+    pub fn new(conn: RakConnection) -> Self {
+        Self {
+            rak_connection: conn,
+            compression: None,
+            encryption: None,
+        }
+    }
 
-    pub async fn send_gamepackets(&self, game_packets: Vec<GamePacket>) {
+    pub fn handle_login() {
+        unimplemented!()
+    }
+
+    pub async fn send_gamepackets(
+        &self,
+        game_packets: Vec<GamePacket>,
+    ) -> Result<(), ConnectionError> {
         let mut buf_pks = vec![];
 
         // Batch all gamepackets together
         for game_packet in game_packets {
-            // Write gamepacket id as varint
-            buf_pks.write_u64_varint(game_packet.id()).unwrap();
-
-            // Serialize each packet
-            let res = match game_packet {
-                GamePacket::Login(pk) => { pk.proto_serialize(&mut buf_pks) }
-                GamePacket::PlayStatus() => { unimplemented!() }
-                GamePacket::ServerToClientHandshake(pk) => { pk.proto_serialize(&mut buf_pks) }
-                GamePacket::ClientToServerHandshake() => { unimplemented!() }
-                GamePacket::Disconnect() => { unimplemented!() }
-                GamePacket::ResourcePacksInfo() => { unimplemented!() }
-                GamePacket::ResourcePackStack() => { unimplemented!() }
-                GamePacket::ResourcePackClientResponse() => { unimplemented!() }
-                GamePacket::Text() => { unimplemented!() }
-                GamePacket::SetTime() => { unimplemented!() }
-                GamePacket::StartGame() => { unimplemented!() }
-                GamePacket::AddPlayer() => { unimplemented!() }
-                GamePacket::AddEntity() => { unimplemented!() }
-                GamePacket::RemoveEntity() => { unimplemented!() }
-                GamePacket::AddItemEntity() => { unimplemented!() }
-                GamePacket::TakeItemEntity() => { unimplemented!() }
-                GamePacket::MoveEntity() => { unimplemented!() }
-                GamePacket::MovePlayer() => { unimplemented!() }
-                GamePacket::RiderJump() => { unimplemented!() }
-                GamePacket::UpdateBlock() => { unimplemented!() }
-                GamePacket::AddPainting() => { unimplemented!() }
-                GamePacket::TickSync() => { unimplemented!() }
-                GamePacket::LevelSoundEventOld() => { unimplemented!() }
-                GamePacket::LevelEvent() => { unimplemented!() }
-                GamePacket::BlockEvent() => { unimplemented!() }
-                GamePacket::EntityEvent() => { unimplemented!() }
-                GamePacket::MobEffect() => { unimplemented!() }
-                GamePacket::UpdateAttributes() => { unimplemented!() }
-                GamePacket::InventoryTransaction() => { unimplemented!() }
-                GamePacket::MobEquipment() => { unimplemented!() }
-                GamePacket::MobArmorEquipment() => { unimplemented!() }
-                GamePacket::Interact() => { unimplemented!() }
-                GamePacket::BlockPickRequest() => { unimplemented!() }
-                GamePacket::EntityPickRequest() => { unimplemented!() }
-                GamePacket::PlayerAction() => { unimplemented!() }
-                GamePacket::HurtArmor() => { unimplemented!() }
-                GamePacket::SetEntityData() => { unimplemented!() }
-                GamePacket::SetEntityMotion() => { unimplemented!() }
-                GamePacket::SetEntityLink() => { unimplemented!() }
-                GamePacket::SetHealth() => { unimplemented!() }
-                GamePacket::SetSpawnPosition() => { unimplemented!() }
-                GamePacket::Animate() => { unimplemented!() }
-                GamePacket::Respawn() => { unimplemented!() }
-                GamePacket::ContainerOpen() => { unimplemented!() }
-                GamePacket::ContainerClose() => { unimplemented!() }
-                GamePacket::PlayerHotbar() => { unimplemented!() }
-                GamePacket::InventoryContent() => { unimplemented!() }
-                GamePacket::InventorySlot() => { unimplemented!() }
-                GamePacket::ContainerSetData() => { unimplemented!() }
-                GamePacket::CraftingData() => { unimplemented!() }
-                GamePacket::CraftingEvent() => { unimplemented!() }
-                GamePacket::GuiDataPickItem() => { unimplemented!() }
-                GamePacket::AdventureSettings() => { unimplemented!() }
-                GamePacket::BlockEntityData() => { unimplemented!() }
-                GamePacket::PlayerInput() => { unimplemented!() }
-                GamePacket::LevelChunk() => { unimplemented!() }
-                GamePacket::SetCommandsEnabled() => { unimplemented!() }
-                GamePacket::SetDifficulty() => { unimplemented!() }
-                GamePacket::ChangeDimension() => { unimplemented!() }
-                GamePacket::SetPlayerGameType() => { unimplemented!() }
-                GamePacket::PlayerList() => { unimplemented!() }
-                GamePacket::SimpleEvent() => { unimplemented!() }
-                GamePacket::TelemetryEvent() => { unimplemented!() }
-                GamePacket::SpawnExperienceOrb() => { unimplemented!() }
-                GamePacket::ClientboundMapItemData() => { unimplemented!() }
-                GamePacket::MapInfoRequest() => { unimplemented!() }
-                GamePacket::RequestChunkRadius() => { unimplemented!() }
-                GamePacket::ChunkRadiusUpdate() => { unimplemented!() }
-                GamePacket::ItemFrameDropItem() => { unimplemented!() }
-                GamePacket::GameRulesChanged() => { unimplemented!() }
-                GamePacket::Camera() => { unimplemented!() }
-                GamePacket::BossEvent() => { unimplemented!() }
-                GamePacket::ShowCredits() => { unimplemented!() }
-                GamePacket::AvailableCommands() => { unimplemented!() }
-                GamePacket::CommandRequest() => { unimplemented!() }
-                GamePacket::CommandBlockUpdate() => { unimplemented!() }
-                GamePacket::CommandOutput() => { unimplemented!() }
-                GamePacket::UpdateTrade() => { unimplemented!() }
-                GamePacket::UpdateEquipment() => { unimplemented!() }
-                GamePacket::ResourcePackDataInfo() => { unimplemented!() }
-                GamePacket::ResourcePackChunkData() => { unimplemented!() }
-                GamePacket::ResourcePackChunkRequest() => { unimplemented!() }
-                GamePacket::Transfer() => { unimplemented!() }
-                GamePacket::PlaySound() => { unimplemented!() }
-                GamePacket::StopSound() => { unimplemented!() }
-                GamePacket::SetTitle() => { unimplemented!() }
-                GamePacket::AddBehaviorTree() => { unimplemented!() }
-                GamePacket::StructureBlockUpdate() => { unimplemented!() }
-                GamePacket::ShowStoreOffer() => { unimplemented!() }
-                GamePacket::PurchaseReceipt() => { unimplemented!() }
-                GamePacket::PlayerSkin() => { unimplemented!() }
-                GamePacket::SubClientLogin() => { unimplemented!() }
-                GamePacket::InitiateWebSocketConnection() => { unimplemented!() }
-                GamePacket::SetLastHurtBy() => { unimplemented!() }
-                GamePacket::BookEdit() => { unimplemented!() }
-                GamePacket::NpcRequest() => { unimplemented!() }
-                GamePacket::PhotoTransfer() => { unimplemented!() }
-                GamePacket::ModalFormRequest() => { unimplemented!() }
-                GamePacket::ModalFormResponse() => { unimplemented!() }
-                GamePacket::ServerSettingsRequest() => { unimplemented!() }
-                GamePacket::ServerSettingsResponse() => { unimplemented!() }
-                GamePacket::ShowProfile() => { unimplemented!() }
-                GamePacket::SetDefaultGameType() => { unimplemented!() }
-                GamePacket::RemoveObjective() => { unimplemented!() }
-                GamePacket::SetDisplayObjective() => { unimplemented!() }
-                GamePacket::SetScore() => { unimplemented!() }
-                GamePacket::LabTable() => { unimplemented!() }
-                GamePacket::UpdateBlockSynced() => { unimplemented!() }
-                GamePacket::MoveEntityDelta() => { unimplemented!() }
-                GamePacket::SetScoreboardIdentity() => { unimplemented!() }
-                GamePacket::SetLocalPlayerAsInitialized() => { unimplemented!() }
-                GamePacket::UpdateSoftEnum() => { unimplemented!() }
-                GamePacket::NetworkStackLatency() => { unimplemented!() }
-                GamePacket::ScriptCustomEvent() => { unimplemented!() }
-                GamePacket::SpawnParticleEffect() => { unimplemented!() }
-                GamePacket::AvailableEntityIdentifiers() => { unimplemented!() }
-                GamePacket::LevelSoundEventV2() => { unimplemented!() }
-                GamePacket::NetworkChunkPublisherUpdate() => { unimplemented!() }
-                GamePacket::BiomeDefinitionList() => { unimplemented!() }
-                GamePacket::LevelSoundEvent() => { unimplemented!() }
-                GamePacket::LevelEventGeneric() => { unimplemented!() }
-                GamePacket::LecternUpdate() => { unimplemented!() }
-                GamePacket::VideoStreamConnect() => { unimplemented!() }
-                GamePacket::ClientCacheStatus() => { unimplemented!() }
-                GamePacket::OnScreenTextureAnimation() => { unimplemented!() }
-                GamePacket::MapCreateLockedCopy() => { unimplemented!() }
-                GamePacket::StructureTemplateDataExportRequest() => { unimplemented!() }
-                GamePacket::StructureTemplateDataExportResponse() => { unimplemented!() }
-                GamePacket::UpdateBlockProperties() => { unimplemented!() }
-                GamePacket::ClientCacheBlobStatus() => { unimplemented!() }
-                GamePacket::ClientCacheMissResponse() => { unimplemented!() }
-                GamePacket::NetworkSettings(pk) => { pk.proto_serialize(&mut buf_pks) }
-                GamePacket::PlayerAuthInput() => { unimplemented!() }
-                GamePacket::CreativeContent() => { unimplemented!() }
-                GamePacket::PlayerEnchantOptions() => { unimplemented!() }
-                GamePacket::ItemStackRequest() => { unimplemented!() }
-                GamePacket::ItemStackResponse() => { unimplemented!() }
-                GamePacket::UpdatePlayerGameType() => { unimplemented!() }
-                GamePacket::PacketViolationWarning() => { unimplemented!() }
-                GamePacket::ItemComponent() => { unimplemented!() }
-                GamePacket::FilterTextPacket() => { unimplemented!() }
-                GamePacket::UpdateSubChunkBlocksPacket() => { unimplemented!() }
-                GamePacket::SubChunkPacket() => { unimplemented!() }
-                GamePacket::SubChunkRequestPacket() => { unimplemented!() }
-                GamePacket::DimensionData() => { unimplemented!() }
-                GamePacket::RequestNetworkSettings(pk) => { pk.proto_serialize(&mut buf_pks) }
-                GamePacket::AlexEntityAnimation() => { unimplemented!() }
-            };
+            // Write gamepacket
+            match game_packet.pk_serilize(&mut buf_pks) {
+                Ok(_) => {}
+                Err(e) => return Err(ConnectionError::SerializeError(e)),
+            }
         }
-
-        // TODO: Encrypt the data
 
         let mut buf = vec![];
 
-        buf.write_u8(RAKNET_GAME_PACKET_ID).unwrap();
+        match buf.write_u8(RAKNET_GAME_PACKET_ID) {
+            Ok(_) => {}
+            Err(_) => return Err(ConnectionError::WriteIOError),
+        };
 
         // Compress the data depending on compression method
         if let Some(compression) = &self.compression {
             // Write compression id
-            buf.write_u8(compression.get_IDu8()).unwrap();
+            match buf.write_u8(compression.get_IDu8()) {
+                Ok(_) => {}
+                Err(_) => return Err(ConnectionError::WriteIOError),
+            };
 
-            buf_pks = compression.compress(&buf_pks).unwrap();
+            buf_pks = match compression.compress(&buf_pks) {
+                Ok(v) => v,
+                Err(e) => return Err(ConnectionError::CompressError(e)),
+            };
         }
 
-        // Write final data into buf
-        buf.write_all(&*buf_pks).unwrap();
+        // TODO: Encrypt the data (after compression)
 
-        self.rak_connection.send(&*buf, true).await.unwrap()
+        // Write final data into buf
+        match buf.write_all(&*buf_pks) {
+            Ok(_) => {}
+            Err(_) => return Err(ConnectionError::WriteIOError),
+        };
+
+        match self.rak_connection.send(&*buf, true).await {
+            Ok(_) => {}
+            Err(_) => return Err(ConnectionError::RaknetError),
+        }
+
+        Ok(())
     }
-    pub fn recv_ganepackets(&self) { unimplemented!() }
+
+    pub async fn recv_gamepackets(&mut self) -> Result<Vec<GamePacket>, ConnectionError> {
+        // Recvieve data and turn it into cursor
+        let mut data = match self.rak_connection.recv().await {
+            Ok(v) => Cursor::new(v),
+            Err(_) => return Err(ConnectionError::ConnectionClosed),
+        };
+
+        // Read Raknet Header
+        match data.read_u8() {
+            Ok(v) => {
+                match v {
+                    RAKNET_GAME_PACKET_ID => {}
+                    // Invalid Raknet packet header
+                    _ => return Err(ConnectionError::InvalidRaknetHeader),
+                }
+            }
+            Err(_) => return Err(ConnectionError::ReadIOError),
+        };
+
+        // TODO: Decrypt the data (before decompression)
+
+        // Decompress data depending on compression method
+        if let Some(compression) = &self.compression {
+            // Read compression algorythm
+            match data.read_u8() {
+                // If Compression algorythm id doesn't match
+                Ok(v) => {
+                    if !(v == compression.get_IDu8()) {
+                        return Err(ConnectionError::InvalidCompressionMethod);
+                    }
+                }
+                Err(_) => return Err(ConnectionError::ReadIOError),
+            };
+
+            let pos = data.position() as usize;
+
+            data = match compression.decompress(&data.into_inner()[pos..].to_vec()) {
+                Ok(v) => Cursor::new(v),
+                Err(e) => return Err(ConnectionError::DecompressError(e)),
+            };
+        }
+
+        'gamepacket_read: loop {
+            let len = match data.read_u64_varint() {
+                Ok(v) => v,
+                Err(_) => return Err(ConnectionError::ReadIOError),
+            };
+
+            let id = match data.read_u64_varint() {
+                Ok(v) => v,
+                Err(_) => return Err(ConnectionError::ReadIOError),
+            };
+
+
+        }
+
+        Ok(vec![])
+    }
 }
