@@ -5,8 +5,8 @@ use std::collections::BTreeMap;
 use std::io::{Cursor, Read};
 use varint_rs::VarintReader;
 
+use serialize::error::{DeserilizationError, SerilizationError};
 use serialize::proto::de::MCProtoDeserialize;
-use serialize::proto::error::{DeserilizationError, SerilizationError};
 use serialize::proto::ser::MCProtoSerialize;
 
 #[derive(Debug)]

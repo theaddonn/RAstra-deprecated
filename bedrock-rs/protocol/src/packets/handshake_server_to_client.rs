@@ -5,8 +5,8 @@ use jsonwebtoken::decode;
 use serde_json::Value;
 use varint_rs::VarintWriter;
 
+use serialize::error::{DeserilizationError, SerilizationError};
 use serialize::proto::de::MCProtoDeserialize;
-use serialize::proto::error::{DeserilizationError, SerilizationError};
 use serialize::proto::ser::MCProtoSerialize;
 
 #[derive(Debug)]
@@ -15,13 +15,19 @@ pub struct HandshakeServerToClientPacket {
 }
 
 impl MCProtoSerialize for HandshakeServerToClientPacket {
-    fn proto_serialize(&self, buf: &mut Vec<u8>) -> Result<(), SerilizationError> where Self: Sized {
+    fn proto_serialize(&self, buf: &mut Vec<u8>) -> Result<(), SerilizationError>
+    where
+        Self: Sized,
+    {
         Ok(())
     }
 }
 
 impl MCProtoDeserialize for HandshakeServerToClientPacket {
-    fn proto_deserialize(cursor: &mut Cursor<Vec<u8>>) -> Result<Self, DeserilizationError> where Self: Sized {
+    fn proto_deserialize(cursor: &mut Cursor<Vec<u8>>) -> Result<Self, DeserilizationError>
+    where
+        Self: Sized,
+    {
         Err(DeserilizationError::ReadIOError)
     }
 }
