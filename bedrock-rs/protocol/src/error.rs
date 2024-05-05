@@ -35,3 +35,10 @@ pub enum DecompressionError {
     ZlibError(flate2::DecompressError),
     SnappyError(snap::Error),
 }
+
+#[derive(Debug)]
+pub enum LoginError {
+    ConnError(ConnectionError),
+    WrongProtocolVersion{ server: i32, client: i32 },
+    PacketMissmatch,
+}

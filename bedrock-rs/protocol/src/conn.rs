@@ -24,8 +24,12 @@ impl Connection {
         }
     }
 
-    pub fn handle_login() {
-        unimplemented!()
+    pub fn set_compression_method(&mut self, compression_method: Option<Box<dyn CompressionMethod>>) {
+        self.compression = compression_method
+    }
+
+    pub fn get_compression_method(&self) -> &Option<Box<dyn CompressionMethod>> {
+        &self.compression
     }
 
     pub async fn send_gamepackets(

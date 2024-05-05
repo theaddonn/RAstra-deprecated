@@ -12,5 +12,6 @@ pub enum DeserilizationError {
     ReadUtf8StringError,
     ReadJsonError,
     ReadJwtError,
+    Base64Error,
     InvalidGamepacketID,
 }

@@ -2,7 +2,7 @@ use crate::compression::CompressionMethod;
 use crate::error::{CompressionError, DecompressionError};
 
 pub struct SnappyCompression {
-    threshold: u16,
+    pub threshold: u16,
 }
 
 impl CompressionMethod for SnappyCompression {

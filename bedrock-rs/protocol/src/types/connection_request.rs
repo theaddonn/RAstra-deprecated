@@ -1,14 +1,18 @@
 use std::collections::BTreeMap;
 use std::io::{Cursor, Read};
+use base64::DecodeError;
 
 use byteorder::LittleEndian;
 use byteorder::ReadBytesExt;
+use jsonwebtoken::{Algorithm, DecodingKey, Validation};
+use ring::signature::EcdsaKeyPair;
 use serde_json::Value;
 use varint_rs::VarintReader;
 
 use serialize::error::{DeserilizationError, SerilizationError};
 use serialize::proto::de::MCProtoDeserialize;
 use serialize::proto::ser::MCProtoSerialize;
+use crate::info::MOAJNG_PUBLIC_KEY;
 
 #[derive(Debug)]
 pub struct ConnectionRequestType {
@@ -185,14 +189,20 @@ impl MCProtoDeserialize for ConnectionRequestType {
                 }
             };
 
+            // Decode MOAJNG_PUBLIC_KEY from base64
+            // let public_key_data = match base64::Engine::decode(MOAJNG_PUBLIC_KEY.as_bytes()) {
+            //     Ok(v) => { v }
+            //     Err(_) => { return Err(DeserilizationError::Base64Error) }
+            // };
+
             // Decode the jwt string into a jwt
-            // let jwt =
-            //     match jwtk::decode_without_verify::<BTreeMap<String, Value>>(jwt_string.as_str()) {
-            //         Ok(v) => v,
-            //         Err(_) => return Err(DeserilizationError::ReadJwtError),
-            //     };
-            //
-            // certificate_chain.push(jwt.claims().extra.to_owned());
+            let jwt =
+                match jsonwebtoken::decode()(jwt_string.as_str(), DecodingKey::from(), Validation::new(Algorithm::ES384)) {
+                    Ok(v) => v,
+                    Err(_) => return Err(DeserilizationError::ReadJwtError),
+                };
+
+            certificate_chain.push(jwt.claims().extra.to_owned());
         }
 
         // read length of certificate_chain vec

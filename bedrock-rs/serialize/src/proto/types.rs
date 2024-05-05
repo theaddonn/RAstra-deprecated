@@ -715,8 +715,8 @@ impl<T: MCProtoSerialize> MCProtoSerialize for Option<T> {
             },
             Some(v) => {
                 match true.proto_serialize(buf) {
-                    Ok(_) => Ok(()),
-                    Err(e) => Err(e),
+                    Ok(_) => return Ok(()),
+                    Err(e) => return Err(e),
                 };
 
                 match v.proto_serialize(buf) {
