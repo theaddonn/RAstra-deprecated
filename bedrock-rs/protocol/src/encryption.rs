@@ -1,7 +1,7 @@
 pub struct Encrypt {
     send_counter: u64,
     buf: [u8; 8],
-    key: Vec<u8>
+    key: Vec<u8>,
 }
 
 impl Encrypt {
