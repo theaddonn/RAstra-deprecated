@@ -1,6 +1,6 @@
 use proc_macro2::TokenStream;
 use quote::quote;
-use syn::{parse_quote, Data, GenericParam, Generics};
+use syn::Data;
 
 pub fn proto_build_de(data: &Data) -> TokenStream {
     let fields = match *data {

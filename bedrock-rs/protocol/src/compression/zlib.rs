@@ -1,6 +1,7 @@
+use flate2::Compression;
+
 use crate::compression::CompressionMethod;
 use crate::error::{CompressionError, DecompressionError};
-use flate2::Compression;
 
 pub struct ZlibCompression {
     threshold: u16,

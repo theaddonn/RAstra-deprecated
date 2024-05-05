@@ -1,6 +1,6 @@
-use byteorder::{BigEndian, LittleEndian, ReadBytesExt, WriteBytesExt};
 use std::io::{Cursor, Read, Write};
 
+use byteorder::{BigEndian, LittleEndian, ReadBytesExt, WriteBytesExt};
 use varint_rs::{VarintReader, VarintWriter};
 
 use crate::error::{DeserilizationError, SerilizationError};

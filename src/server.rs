@@ -7,10 +7,11 @@ use std::{cell, env};
 
 use async_once::AsyncOnce;
 use lazy_static::lazy_static;
-use rak_rs::error::server::ServerError;
-use rak_rs::{rakrs_debug, Listener};
 use rand::random;
 use tokio::sync::{Mutex, MutexGuard};
+
+use rak_rs::error::server::ServerError;
+use rak_rs::{rakrs_debug, Listener};
 
 use crate::cli::cli::Cli;
 use crate::config::config::Config;

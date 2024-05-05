@@ -1,9 +1,7 @@
 use std::collections::BTreeMap;
 use std::io::Cursor;
 
-use jsonwebtoken::decode;
 use serde_json::Value;
-use varint_rs::VarintWriter;
 
 use serialize::error::{DeserilizationError, SerilizationError};
 use serialize::proto::de::MCProtoDeserialize;

@@ -1,6 +1,3 @@
-use crate::compression::none::NoCompression;
-use crate::compression::snappy::SnappyCompression;
-use crate::compression::zlib::ZlibCompression;
 use crate::error::{CompressionError, DecompressionError};
 
 pub mod none;

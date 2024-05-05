@@ -1,16 +1,13 @@
-use crate::compression;
+use std::io::{Cursor, Write};
+
+use byteorder::{ReadBytesExt, WriteBytesExt};
+use rak_rs::connection::Connection as RakConnection;
+use varint_rs::{VarintReader, VarintWriter};
+
 use crate::compression::CompressionMethod;
-use crate::error::{CompressionError, ConnectionError};
+use crate::error::ConnectionError;
 use crate::gamepacket::GamePacket;
 use crate::info::RAKNET_GAME_PACKET_ID;
-use byteorder::{ReadBytesExt, WriteBytesExt};
-use rak_rs::connection::queue::SendQueueError;
-use rak_rs::connection::{Connection as RakConnection, RecvError};
-use serialize::proto::ser::MCProtoSerialize;
-use std::cell::Cell;
-use std::io::{Cursor, Error, Write};
-use varint_rs::{VarintReader, VarintWriter};
-use serialize::error::DeserilizationError;
 
 pub struct Connection {
     rak_connection: RakConnection,
@@ -129,8 +126,8 @@ impl Connection {
 
         'gamepacket_read: loop {
             match GamePacket::pk_deserialize(&mut data) {
-                Ok(v) => { gamepackets.push(v) }
-                Err(e) => { return Err(ConnectionError::DeserializeError(e)) }
+                Ok(v) => gamepackets.push(v),
+                Err(e) => return Err(ConnectionError::DeserializeError(e)),
             };
 
             if (data.position() == data.get_ref().len() as u64) {

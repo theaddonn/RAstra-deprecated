@@ -1,15 +1,13 @@
+use core::net::SocketAddr;
+use core::net::SocketAddrV4;
+
+use rak_rs::mcpe::motd::Gamemode;
+use rak_rs::Motd;
+use rand::RngCore;
+
 use crate::conn::Connection;
 use crate::error::ListenerError;
 use crate::info::{MINECRAFT_EDITION_MOTD, MINECRAFT_VERSION, PROTOCOL_VERSION};
-use core::net::SocketAddr;
-use core::net::{SocketAddrV4, SocketAddrV6};
-use rak_rs::connection::Connection as RakConnection;
-use rak_rs::error::server::ServerError;
-use rak_rs::mcpe::motd::Gamemode;
-use rak_rs::Motd;
-use rand::{Rng, RngCore};
-use ring::error::Unspecified;
-use std::str::FromStr;
 
 pub struct Listener {
     rak_listener: rak_rs::Listener,

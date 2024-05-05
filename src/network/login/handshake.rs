@@ -2,12 +2,13 @@ use bedrock_rs::protocol::info::GamePacketType;
 use ecdsa::elliptic_curve::pkcs8::LineEnding;
 use ecdsa::elliptic_curve::pkcs8::LineEnding::CRLF;
 use jsonwebtoken::{EncodingKey, Header};
+use serde_json::json;
+
 use p384::ecdsa::{SigningKey, VerifyingKey};
 use p384::pkcs8::der::{Decode, Encode};
 use p384::pkcs8::{Document, EncodePrivateKey, EncodePublicKey};
 use p384::SecretKey;
 use rak_rs::connection::RecvError;
-use serde_json::json;
 use signature::rand_core::OsRng;
 
 use crate::error::RastraError;

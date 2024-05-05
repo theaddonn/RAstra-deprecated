@@ -1,8 +1,9 @@
+use std::collections::BTreeMap;
+use std::io::{Cursor, Read};
+
 use byteorder::LittleEndian;
 use byteorder::ReadBytesExt;
 use serde_json::Value;
-use std::collections::BTreeMap;
-use std::io::{Cursor, Read};
 use varint_rs::VarintReader;
 
 use serialize::error::{DeserilizationError, SerilizationError};
