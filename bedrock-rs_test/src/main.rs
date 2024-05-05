@@ -41,9 +41,9 @@ async fn main() {
 
     println!("started!");
 
-    let pk = conn.recv_gamepackets().await.unwrap().index(0);
+    let pk = conn.recv_gamepackets().await.unwrap();
 
-
+    println!("{:?}", pk);
 
     //let mut conn = listener.accept().unwrap();
 
