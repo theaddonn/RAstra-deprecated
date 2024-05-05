@@ -1,4 +1,4 @@
-use crate::compression::{CompressionMethod};
+use crate::compression::CompressionMethod;
 use crate::error::{CompressionError, DecompressionError};
 
 pub struct SnappyCompression {
@@ -22,8 +22,8 @@ impl CompressionMethod for SnappyCompression {
         let mut encoder = snap::raw::Encoder::new();
 
         match encoder.compress_vec(&*data) {
-            Ok(v) => { Ok(v) }
-            Err(e) => { Err(CompressionError::SnappyError(e)) }
+            Ok(v) => Ok(v),
+            Err(e) => Err(CompressionError::SnappyError(e)),
         }
     }
 
@@ -31,8 +31,8 @@ impl CompressionMethod for SnappyCompression {
         let mut decoder = snap::raw::Decoder::new();
 
         match decoder.decompress_vec(&*data) {
-            Ok(v) => { Ok(v) }
-            Err(e) => { Err(DecompressionError::SnappyError(e)) }
+            Ok(v) => Ok(v),
+            Err(e) => Err(DecompressionError::SnappyError(e)),
         }
     }
 }

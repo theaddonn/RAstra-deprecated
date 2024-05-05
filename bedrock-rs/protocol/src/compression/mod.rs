@@ -4,8 +4,8 @@ use crate::compression::zlib::ZlibCompression;
 use crate::error::{CompressionError, DecompressionError};
 
 pub mod none;
-pub mod zlib;
 pub mod snappy;
+pub mod zlib;
 
 pub trait CompressionMethod {
     /// Used after the raknet game packet header id for identifying with which

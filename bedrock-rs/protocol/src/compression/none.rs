@@ -1,4 +1,4 @@
-use crate::compression::{CompressionMethod};
+use crate::compression::CompressionMethod;
 use crate::error::{CompressionError, DecompressionError};
 
 pub struct NoCompression {}
@@ -11,7 +11,7 @@ impl CompressionMethod for NoCompression {
     fn get_IDu16(&self) -> u16 {
         0xFFFF
     }
-    
+
     fn get_threshold(&self) -> u16 {
         u16::MAX
     }
