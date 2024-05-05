@@ -6,7 +6,6 @@ use bedrock_rs::protocol::gamepacket::GamePacket::NetworkSettings;
 use bedrock_rs::protocol::listener::ListenerConfig;
 use bedrock_rs::protocol::packets::network_settings::NetworkSettingsPacket;
 use tokio::main;
-use varint_rs;
 
 #[main]
 async fn main() {
