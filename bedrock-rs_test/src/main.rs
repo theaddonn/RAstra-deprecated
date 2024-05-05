@@ -1,10 +1,9 @@
 use std::net::SocketAddrV4;
 use std::str::FromStr;
 
-use bedrock_rs::core::types::u16le;
-use bedrock_rs::protocol::gamepacket::GamePacket::NetworkSettings;
+use bedrock_rs::protocol::compression::snappy::SnappyCompression;
 use bedrock_rs::protocol::listener::ListenerConfig;
-use bedrock_rs::protocol::packets::network_settings::NetworkSettingsPacket;
+use bedrock_rs::protocol::login::{handle_login_server_side, LoginServerSideOptions};
 use tokio::main;
 
 #[main]
@@ -26,21 +25,14 @@ async fn main() {
 
     println!("started!");
 
-    let pk = conn.recv_gamepackets().await.unwrap();
+    handle_login_server_side(&mut conn, LoginServerSideOptions {
+        Compression: Box::new(SnappyCompression{threshold: 1024}),
+        Encryption: false,
+        AuthenticationEnabled: false,
+        AllowOtherProtocols: false,
+    }).await.unwrap();
 
-    println!("PKS: {:?}", pk);
-
-    conn.send_gamepackets(vec![NetworkSettings(NetworkSettingsPacket {
-        compression_threshold: u16le(0),
-        compression_algorythm: u16le(0xFFFF),
-        client_throttle_enabled: false,
-        client_throttle_threshold: 0,
-        client_throttle_scalar: 0.0,
-    })]).await.unwrap();
-
-    let pk = conn.recv_gamepackets().await.unwrap();
-
-    println!("PKS: {:?}", pk);
+    println!("login successful!");
 
     loop {}
 }
