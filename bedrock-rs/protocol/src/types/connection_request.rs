@@ -196,13 +196,13 @@ impl MCProtoDeserialize for ConnectionRequestType {
             // };
 
             // Decode the jwt string into a jwt
-            let jwt =
-                match jsonwebtoken::decode()(jwt_string.as_str(), DecodingKey::from(), Validation::new(Algorithm::ES384)) {
-                    Ok(v) => v,
-                    Err(_) => return Err(DeserilizationError::ReadJwtError),
-                };
+            // let jwt =
+            //     match jsonwebtoken::decode()(jwt_string.as_str(), DecodingKey::from(), Validation::new(Algorithm::ES384)) {
+            //         Ok(v) => v,
+            //         Err(_) => return Err(DeserilizationError::ReadJwtError),
+            //     };
 
-            certificate_chain.push(jwt.claims().extra.to_owned());
+            // certificate_chain.push(jwt.claims().extra.to_owned());
         }
 
         // read length of certificate_chain vec
