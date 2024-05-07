@@ -32,7 +32,7 @@ flate2 = "1.0.28"
 snap = "1.1.1"
 
 jsonwebtoken = { version = "9.3.0" }
-ecdsa = { version = "0.16.9", features = ["pkcs8", "signing", "serde", "der", "arithmetic", "pem", "sha2", "dev", "digest", "alloc", "default", "hazmat", "serdect", "verifying", "rfc6979", "spki", "std"] }
+#ecdsa = { version = "0.16.9", features = ["pkcs8", "signing", "serde", "der", "arithmetic", "pem", "sha2", "dev", "digest", "alloc", "default", "hazmat", "serdect", "verifying", "rfc6979", "spki", "std"] }
 #p384 = { version = "0.13.0", features = ["pkcs8", "ecdsa", "arithmetic", "serde", "pem", "hash2curve", "std", "sha2", "sha384", "jwk", "bits", "ecdh", "digest", "ecdsa-core", "serdect", "hex-literal", "alloc", "expose-field", "default", "test-vectors", "voprf"] }
 
 base64 = "0.22.0"
