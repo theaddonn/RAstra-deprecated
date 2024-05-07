@@ -671,10 +671,10 @@ impl GamePacket {
 
         // Read the gamepacket ID
         let gamepacket_id: GamePacketID = match cursor.read_u64_varint() {
-            Ok(v) => match GamePacketID::from_u64(v) {
-                Some(pk) => pk,
-                None => return Err(DeserilizationError::InvalidGamepacketID),
-            },
+            Ok(v) => { match GamePacketID::from_u64(v) {
+                    Some(pk) => pk,
+                    None => return Err(DeserilizationError::InvalidGamepacketID),
+            }}
             Err(_) => return Err(DeserilizationError::ReadIOError),
         };
 
