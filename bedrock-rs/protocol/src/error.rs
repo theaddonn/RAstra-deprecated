@@ -1,7 +1,6 @@
-use serialize::error::{DeserilizationError, SerilizationError};
+use std::error::Error;
 
-#[derive(Debug, Copy, Clone, Eq, PartialEq)]
-pub enum ProtocolError {}
+use serialize::error::{DeserilizationError, SerilizationError};
 
 #[derive(Debug, Copy, Clone, Eq, PartialEq)]
 pub enum ListenerError {
@@ -17,28 +16,23 @@ pub enum ConnectionError {
     SerializeError(SerilizationError),
     DeserializeError(DeserilizationError),
     ConnectionClosed,
-    RaknetError,
+    RakNetError,
     CompressError(CompressionError),
-    DecompressError(DecompressionError),
-    InvalidRaknetHeader,
-    InvalidCompressionMethod,
+    InvalidRakNetHeader,
+    UnknownCompressionMethod(u8),
+    WrongCompressionMethod,
 }
 
 #[derive(Debug)]
 pub enum CompressionError {
-    ZlibError(flate2::CompressError),
+    ZlibError(Box<dyn Error>),
     SnappyError(snap::Error),
-}
-
-#[derive(Debug)]
-pub enum DecompressionError {
-    ZlibError(flate2::DecompressError),
-    SnappyError(snap::Error),
+    InvalidCompressionMethod,
 }
 
 #[derive(Debug)]
 pub enum LoginError {
     ConnError(ConnectionError),
-    WrongProtocolVersion{ server: i32, client: i32 },
+    WrongProtocolVersion { client: i32 },
     PacketMissmatch,
 }
