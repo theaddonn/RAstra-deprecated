@@ -1,13 +1,15 @@
 use bedrock_core::types::u16le;
 
+use crate::compression::{CompressionMethod, CompressionMethods};
 use crate::compression::none::NoCompression;
 use crate::compression::snappy::SnappyCompression;
 use crate::compression::zlib::ZlibCompression;
-use crate::compression::{CompressionMethod, CompressionMethods};
 use crate::conn::Connection;
 use crate::error::LoginError;
 use crate::gamepacket::GamePacket;
 use crate::packets::network_settings::NetworkSettingsPacket;
+use crate::packets::play_status::PlayStatusPacket;
+use crate::types::play_status::PlayStatusType;
 
 pub struct LoginServerSideOptions {
     pub compression: CompressionMethods,
@@ -24,7 +26,7 @@ pub async fn handle_login_server_side(
     connection: &mut Connection,
     options: LoginServerSideOptions,
 ) -> Result<(), LoginError> {
-    // Recieve NetworkRequestSettings
+    // Receive NetworkRequestSettings
     let gamepackets = match connection.recv_gamepackets().await {
         Ok(v) => v,
         Err(_) => return Err(LoginError::PacketMissmatch),
@@ -75,9 +77,10 @@ pub async fn handle_login_server_side(
 
     println!("NETWORK SETTINGS");
 
+    // Enable Compression after Network Settings
     connection.set_compression_method(Some(options.compression));
 
-    // Recieve Login
+    // Receive Login
     let gamepackets = match connection.recv_gamepackets().await {
         Ok(v) => v,
         Err(e) => {
@@ -101,9 +104,27 @@ pub async fn handle_login_server_side(
         _ => return Err(LoginError::PacketMissmatch),
     };
 
-    println!("LOGING #3 {:#?}", login_pk);
+    println!("LOGIN #3 {:#?}", login_pk);
 
     println!("LOGIN");
+
+    // If encryption is enabled send the
+    if options.encryption {
+        // TODO: Setup Encryption
+    }
+
+    // Sent PlayStatus Login successful packet to indicate that the login was successful
+    match connection.send_gamepackets(vec![GamePacket::PlayStatus(PlayStatusPacket {
+        status: PlayStatusType::LoginSuccess
+    })]).await {
+        Ok(_) => {}
+        Err(e) => { return Err(LoginError::ConnError(e)) }
+    };
+
+    println!("PLAY STATUS LOGIN");
+
+
+
 
     Ok(())
 }

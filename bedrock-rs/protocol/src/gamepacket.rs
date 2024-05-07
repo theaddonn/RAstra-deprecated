@@ -12,12 +12,13 @@ use crate::packets::handshake_server_to_client::HandshakeServerToClientPacket;
 use crate::packets::login::LoginPacket;
 use crate::packets::network_settings::NetworkSettingsPacket;
 use crate::packets::network_settings_request::NetworkSettingsRequestPacket;
+use crate::packets::play_status::PlayStatusPacket;
 
 #[repr(u64)]
 #[derive(Debug)]
 pub enum GamePacket {
     Login(LoginPacket),
-    PlayStatus(),
+    PlayStatus(PlayStatusPacket),
     ServerToClientHandshake(HandshakeServerToClientPacket),
     ClientToServerHandshake(),
     Disconnect(),
@@ -220,8 +221,8 @@ impl GamePacket {
             GamePacket::Login(pk) => {
                 ser_packet!(buf, GamePacketID::LoginID, pk)
             }
-            GamePacket::PlayStatus() => {
-                unimplemented!()
+            GamePacket::PlayStatus(pk) => {
+                ser_packet!(buf, GamePacketID::PlayStatusID, pk)
             }
             GamePacket::ServerToClientHandshake(pk) => {
                 ser_packet!(buf, GamePacketID::ServerToClientHandshakeID, pk)
@@ -681,7 +682,9 @@ impl GamePacket {
         match gamepacket_id {
             GamePacketID::LoginID => Ok(GamePacket::Login(de_packet!(cursor, LoginPacket))),
             GamePacketID::PlayStatusID => {
-                unimplemented!()
+                Ok(GamePacket::PlayStatus(
+                    de_packet!(cursor, PlayStatusPacket),
+                ))
             }
             GamePacketID::ServerToClientHandshakeID => Ok(GamePacket::ServerToClientHandshake(
                 de_packet!(cursor, HandshakeServerToClientPacket),
