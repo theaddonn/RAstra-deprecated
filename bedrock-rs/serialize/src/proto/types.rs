@@ -667,7 +667,7 @@ impl MCProtoDeserialize for String {
         match cursor.read_exact(&mut *string_buf) {
             Ok(_) => {}
             Err(_) => {
-                return Err(DeserilizationError::NotEnoughtRemainingError);
+                return Err(DeserilizationError::NotEnoughRemainingError);
             }
         }
 

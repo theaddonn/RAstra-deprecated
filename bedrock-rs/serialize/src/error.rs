@@ -8,10 +8,12 @@ pub enum SerilizationError {
 #[derive(Copy, Clone, Debug)]
 pub enum DeserilizationError {
     ReadIOError,
-    NotEnoughtRemainingError,
+    NotEnoughRemainingError,
     ReadUtf8StringError,
     ReadJsonError,
     ReadJwtError,
+    ReadEcdsaKey,
     Base64Error,
     InvalidGamepacketID,
+    MissingField,
 }
