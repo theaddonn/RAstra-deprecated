@@ -1,7 +1,10 @@
 use std::net::SocketAddrV4;
 use std::str::FromStr;
+use bedrock_rs::protocol::compression::CompressionMethods;
+use bedrock_rs::protocol::compression::none::NoCompression;
 
 use bedrock_rs::protocol::compression::snappy::SnappyCompression;
+use bedrock_rs::protocol::compression::zlib::ZlibCompression;
 use bedrock_rs::protocol::listener::ListenerConfig;
 use bedrock_rs::protocol::login::{handle_login_server_side, LoginServerSideOptions};
 use tokio::main;
@@ -26,10 +29,10 @@ async fn main() {
     println!("started!");
 
     handle_login_server_side(&mut conn, LoginServerSideOptions {
-        Compression: Box::new(SnappyCompression{threshold: 1024}),
-        Encryption: false,
-        AuthenticationEnabled: false,
-        AllowOtherProtocols: false,
+        compression: CompressionMethods::Zlib(ZlibCompression{ threshold: 1024, compression_level: 9 }),
+        encryption: false,
+        authentication_enabled: false,
+        allowed_proto_versions: vec![671],
     }).await.unwrap();
 
     println!("login successful!");
