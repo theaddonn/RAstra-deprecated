@@ -1,9 +1,7 @@
 use std::net::SocketAddrV4;
 use std::str::FromStr;
-use bedrock_rs::protocol::compression::CompressionMethods;
-use bedrock_rs::protocol::compression::none::NoCompression;
 
-use bedrock_rs::protocol::compression::snappy::SnappyCompression;
+use bedrock_rs::protocol::compression::CompressionMethods;
 use bedrock_rs::protocol::compression::zlib::ZlibCompression;
 use bedrock_rs::protocol::listener::ListenerConfig;
 use bedrock_rs::protocol::login::{handle_login_server_side, LoginServerSideOptions};
