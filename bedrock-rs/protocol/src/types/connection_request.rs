@@ -1,18 +1,17 @@
 use std::collections::BTreeMap;
 use std::io::{Cursor, Read};
-use base64::DecodeError;
 
+use base64::prelude::BASE64_STANDARD;
+use base64::Engine;
 use byteorder::LittleEndian;
 use byteorder::ReadBytesExt;
-use jsonwebtoken::{Algorithm, DecodingKey, Validation};
-use ring::signature::EcdsaKeyPair;
+use jsonwebtoken::{DecodingKey, Validation};
 use serde_json::Value;
 use varint_rs::VarintReader;
 
 use serialize::error::{DeserilizationError, SerilizationError};
 use serialize::proto::de::MCProtoDeserialize;
 use serialize::proto::ser::MCProtoSerialize;
-use crate::info::MOAJNG_PUBLIC_KEY;
 
 #[derive(Debug)]
 pub struct ConnectionRequestType {
@@ -141,7 +140,7 @@ impl MCProtoDeserialize for ConnectionRequestType {
         // read string data (certificate_chain)
         match cursor.read_exact(&mut certificate_chain_buf) {
             Ok(_) => {}
-            Err(_) => return Err(DeserilizationError::NotEnoughtRemainingError),
+            Err(_) => return Err(DeserilizationError::NotEnoughRemainingError),
         };
 
         // transform into string
@@ -180,6 +179,8 @@ impl MCProtoDeserialize for ConnectionRequestType {
             }
         };
 
+        let mut key_data = vec![];
+
         for jwt_json in certificate_chain_json_jwts {
             let jwt_string = match jwt_json {
                 Value::String(str) => str,
@@ -189,20 +190,55 @@ impl MCProtoDeserialize for ConnectionRequestType {
                 }
             };
 
-            // Decode MOAJNG_PUBLIC_KEY from base64
-            // let public_key_data = match base64::Engine::decode(MOAJNG_PUBLIC_KEY.as_bytes()) {
-            //     Ok(v) => { v }
-            //     Err(_) => { return Err(DeserilizationError::Base64Error) }
-            // };
+            let jwt_header = match jsonwebtoken::decode_header(jwt_string.as_str()) {
+                Ok(v) => v,
+                Err(_) => return Err(DeserilizationError::ReadJwtError),
+            };
+
+            let mut jwt_validation = Validation::new(jwt_header.alg);
+            // TODO: This definitely is not right. Even Zuri-MC doesn't understand this
+            jwt_validation.insecure_disable_signature_validation();
+            jwt_validation.set_required_spec_claims::<&str>(&[]);
+            jwt_validation.set_issuer::<&str>(&["Mojang"]);
+
+            // Is first jwt, use self-signed header from x5u
+            if key_data.is_empty() {
+                let x5u = match jwt_header.x5u {
+                    None => return Err(DeserilizationError::MissingField),
+                    Some(ref v) => v.as_bytes(),
+                };
+
+                key_data = match BASE64_STANDARD.decode(x5u) {
+                    Ok(v) => v,
+                    Err(_) => return Err(DeserilizationError::Base64Error),
+                };
+            }
 
             // Decode the jwt string into a jwt
-            // let jwt =
-            //     match jsonwebtoken::decode()(jwt_string.as_str(), DecodingKey::from(), Validation::new(Algorithm::ES384)) {
-            //         Ok(v) => v,
-            //         Err(_) => return Err(DeserilizationError::ReadJwtError),
-            //     };
+            let jwt = match jsonwebtoken::decode::<BTreeMap<String, Value>>(
+                jwt_string.as_str(),
+                &DecodingKey::from_ec_der(&key_data),
+                &jwt_validation,
+            ) {
+                Ok(v) => v,
+                Err(e) => {
+                    println!("ERROR: {e}");
+                    return Err(DeserilizationError::ReadJwtError);
+                }
+            };
 
-            // certificate_chain.push(jwt.claims().extra.to_owned());
+            key_data = match jwt.claims.get("identityPublicKey") {
+                None => return Err(DeserilizationError::MissingField),
+                Some(v) => match v {
+                    Value::String(str) => match BASE64_STANDARD.decode(str.as_bytes()) {
+                        Ok(v) => v.clone(),
+                        Err(_) => return Err(DeserilizationError::Base64Error),
+                    },
+                    _ => return Err(DeserilizationError::ReadJsonError),
+                },
+            };
+
+            certificate_chain.push(jwt.claims);
         }
 
         // read length of certificate_chain vec
@@ -216,7 +252,7 @@ impl MCProtoDeserialize for ConnectionRequestType {
         // read string data (certificate_chain)
         match cursor.read_exact(&mut raw_token_buf) {
             Ok(_) => {}
-            Err(_) => return Err(DeserilizationError::NotEnoughtRemainingError),
+            Err(_) => return Err(DeserilizationError::NotEnoughRemainingError),
         };
 
         // transform into string
