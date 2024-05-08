@@ -1,5 +1,7 @@
 # RAstra
 
+<a href="https://discord.gg/ArvWEVHGWs"><img src="https://img.shields.io/discord/1218673790775726182.svg?style=flat&label=Azurite&logo=discord&logoColor=ffffff&color=011e2c&labelColor=1f3157"><a/>
+
 <picture>
   <img alt="The RAstra banner" src="https://github.com/Adrian8115/RAstra/blob/9b26b2e77fed8c48e4124cfdf50a0e3e5c678588/assets/RAstra_banner.png">
 </picture>
